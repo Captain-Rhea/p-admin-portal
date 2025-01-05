@@ -75,7 +75,19 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-04-03',
   devtools: { enabled: false },
-  css: ['~/assets/css/tailwind.css'],
+  css: [
+    '~/assets/css/tailwind.css',
+    'vuetify/styles',
+    '@mdi/font/css/materialdesignicons.css',
+  ],
+  build: {
+    transpile: ['vuetify'],
+  },
+  vite: {
+    define: {
+      'process.env.DEBUG': false,
+    },
+  },
   postcss: {
     plugins: {
       tailwindcss: {},
