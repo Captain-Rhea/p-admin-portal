@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-  titleTemplate: 'Reset Password - %s',
+  titleTemplate: 'Forgot Password - %s',
 });
 </script>
 

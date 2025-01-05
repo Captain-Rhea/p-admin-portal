@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  ssr: true,
+  ssr: false,
   nitro: {
     preset: 'static',
   },
@@ -7,28 +7,18 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'RHEA Solutions - บริการออกแบบเว็บไซต์และการตลาดออนไลน์',
+      title: 'Admin Protal',
       meta: [
         { name: 'theme-color', content: '#ffffff' },
-        {
-          name: 'description',
-          content:
-            'RHEA Solutions ผู้เชี่ยวชาญด้านการออกแบบเว็บไซต์ พัฒนา Web Application และการตลาดออนไลน์ ครบวงจร ช่วยให้ธุรกิจของคุณเติบโตในโลกดิจิทัล',
-        },
-        {
-          name: 'keywords',
-          content:
-            'ออกแบบเว็บไซต์, พัฒนาเว็บแอปพลิเคชัน, การตลาดออนไลน์, รับทำเว็บไซต์, ออกแบบเว็บมืออาชีพ',
-        },
         { name: 'author', content: 'RHEA Solutions Team' },
         {
           property: 'og:title',
-          content: 'RHEA Solutions - บริการออกแบบเว็บไซต์และการตลาดออนไลน์',
+          content: 'ระบบ Admin Protal ออกแบบและพัฒนาโดย RHEA Solutions Team',
         },
         {
           property: 'og:description',
           content:
-            'RHEA Solutions ผู้เชี่ยวชาญด้านการออกแบบเว็บไซต์ พัฒนา Web Application และการตลาดออนไลน์ ครบวงจร เพื่อช่วยให้ธุรกิจของคุณเติบโตในโลกดิจิทัล',
+            'Admin Portal เป็นแพลตฟอร์มที่ออกแบบมาเพื่อให้ผู้ดูแลระบบสามารถจัดการและควบคุมระบบต่างๆ ได้อย่างมีประสิทธิภาพ',
         },
         { property: 'og:image', content: '/og-image.jpg' },
         {
@@ -39,10 +29,8 @@ export default defineNuxtConfig({
           property: 'og:image:height',
           content: '630',
         },
-        { property: 'og:url', content: 'https://rhea-solutions.com' },
       ],
       link: [
-        { rel: 'canonical', href: 'https://rhea-solutions.com' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         {
           rel: 'preconnect',
