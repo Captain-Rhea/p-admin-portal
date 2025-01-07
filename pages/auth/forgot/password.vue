@@ -2,6 +2,10 @@
 useHead({
   titleTemplate: 'Forgot Password - %s',
 });
+
+definePageMeta({
+  layout: 'blank',
+});
 </script>
 
 <template>

@@ -1,8 +1,13 @@
+import type { NuxtPage } from 'nuxt/schema';
+
 export default defineNuxtConfig({
-  ssr: false,
-  nitro: {
-    preset: 'static',
-  },
+  ssr: true,
+  // nitro: {
+  //   // preset: 'static',
+  //   prerender: {
+  //     routes: [],
+  //   },
+  // },
   app: {
     head: {
       charset: 'utf-8',
@@ -49,10 +54,27 @@ export default defineNuxtConfig({
     },
     pageTransition: { name: 'page', mode: 'out-in' },
   },
+  hooks: {
+    'pages:extend'(pages) {
+      function setMiddleware(pages: NuxtPage[]) {
+        for (const page of pages) {
+          if (true) {
+            page.meta ||= {};
+            page.meta.middleware = ['auth'];
+          }
+          if (page.children) {
+            setMiddleware(page.children);
+          }
+        }
+      }
+      setMiddleware(pages);
+    },
+  },
   runtimeConfig: {
     public: {
       mainApi: 'http://localhost:3001',
-      idpApi: 'https://idp.in-spect-pro.com',
+      idpApi: 'http://localhost:3002',
+      // idpApi: 'https://idp.in-spect-pro.com',
       storageApi: 'https://storage.in-spect-pro.com',
     },
   },

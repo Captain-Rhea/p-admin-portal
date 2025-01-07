@@ -1,6 +1,16 @@
+<script setup lang="ts">
+useHead({
+  titleTemplate: 'Invite Confirm - %s',
+});
+
+definePageMeta({
+  layout: 'blank',
+});
+</script>
+
 <template>
-  <div>
-    <h1 class="text-3xl">Page Start</h1>
+  <div class="pt-[80px]">
+    <h1 class="text-3xl">Page Accept</h1>
     <p>
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugiat vero
       beatae eaque, quo perspiciatis porro velit praesentium a eius aperiam
