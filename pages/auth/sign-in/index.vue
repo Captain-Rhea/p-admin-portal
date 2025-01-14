@@ -13,8 +13,12 @@ const { login, isLogin } = useAuth();
 const appStore = useAppStore();
 
 onMounted(async () => {
-  await isLogin();
-  return navigateTo('/');
+  try {
+    await isLogin();
+    return navigateTo('/');
+  } catch (error: any) {
+    appStore.enableApp();
+  }
 });
 
 const loginForm = ref();

@@ -7,8 +7,12 @@ const appStore = useAppStore();
 const handleUserAuthentication = async () => {
   try {
     await isLogin();
-  } catch (error) {
-    return navigateTo('/auth/sign-in');
+  } catch (error: any) {
+    if (error.response.status === 400) {
+      return navigateTo('/auth/sign-in');
+    } else {
+      console.error('isLogin Error: ', error);
+    }
   }
 };
 

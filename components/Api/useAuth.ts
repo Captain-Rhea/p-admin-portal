@@ -22,5 +22,14 @@ export const useAuth = () => {
     }
   };
 
-  return { login, isLogin };
+  const logout = async () => {
+    try {
+      const response = await $mainApi.post('/v1/auth/logout');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return { login, isLogin, logout };
 };

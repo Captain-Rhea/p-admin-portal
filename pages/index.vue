@@ -6,9 +6,6 @@ useHead({
 
 <template>
   <div>
-    <SectionsHero />
-    <SectionsSolutions />
-    <SectionsAboutUs />
-    <SectionsContact />
+    <DialogsSignOut />
   </div>
 </template>
