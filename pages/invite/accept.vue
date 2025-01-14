@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-  titleTemplate: 'Invite Confirm - %s',
+  titleTemplate: 'Invite Confirmation - %s',
 });
 
 definePageMeta({
@@ -9,13 +9,15 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="p-4">
-    <h1 class="text-3xl">Page Accept</h1>
-    <p>
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugiat vero
-      beatae eaque, quo perspiciatis porro velit praesentium a eius aperiam
-      asperiores, totam earum reiciendis dolorum labore, tenetur inventore
-      dignissimos. Nulla.
-    </p>
+  <div class="flex inset-0 items-center justify-center w-full h-screen">
+    <div class="max-w-[500px] min-w-[320px]">
+      <h1 class="text-3xl">Page Accept</h1>
+      <p>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugiat vero
+        beatae eaque, quo perspiciatis porro velit praesentium a eius aperiam
+        asperiores, totam earum reiciendis dolorum labore, tenetur inventore
+        dignissimos. Nulla.
+      </p>
+    </div>
   </div>
 </template>

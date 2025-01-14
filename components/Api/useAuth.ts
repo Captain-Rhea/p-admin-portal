@@ -31,5 +31,54 @@ export const useAuth = () => {
     }
   };
 
-  return { login, isLogin, logout };
+  const forgotPassword = async (recipientEmail: string) => {
+    try {
+      const response = await $mainApi.post('/v1/auth/send/forgot-mail', {
+        recipient_email: recipientEmail,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const forgotPasswordVerifyKey = async (resetKey: string) => {
+    try {
+      const response = await $mainApi.post('/v1/auth/send/forgot-mail/verify', {
+        reset_key: resetKey,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const forgotPasswordReset = async (
+    recipientEmail: string | null,
+    resetKey: string,
+    newPassword: string
+  ) => {
+    try {
+      const response = await $mainApi.post(
+        '/v1/auth/send/forgot-mail/reset-password',
+        {
+          recipient_email: recipientEmail,
+          reset_key: resetKey,
+          new_password: newPassword,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return {
+    login,
+    isLogin,
+    logout,
+    forgotPassword,
+    forgotPasswordVerifyKey,
+    forgotPasswordReset,
+  };
 };

@@ -79,9 +79,7 @@ const handleLogin = async () => {
     <div
       class="col-span-12 lg:col-span-6 xl:col-span-5 relative flex inset-0 items-center justify-center rounded-lg overflow-hidden"
     >
-      <div
-        class="max-w-[400px] min-w-[320px] p-8 space-y-8 rounded-lg bg-white"
-      >
+      <div class="max-w-[400px] min-w-[320px] space-y-8 rounded-lg bg-white">
         <div class="text-center">
           <h1 class="text-3xl font-medium">WELCOME BACK</h1>
           <p class="text-gray-500">Sign in to your account</p>
