@@ -47,11 +47,11 @@ const confirmSignOut = async () => {
           Are you sure you want to sign out? You will need to log in again to
           access your account.
         </v-card-text>
-        <v-card-actions>
+        <div class="flex items-center justify-between px-4 pb-2">
           <v-btn :disabled="isLoading" variant="text" @click="cancelSignOut">
             <div class="capitalize">Cancel</div>
           </v-btn>
-          <v-spacer />
+
           <v-btn
             :loading="isLoading"
             color="error"
@@ -60,7 +60,7 @@ const confirmSignOut = async () => {
           >
             <div class="capitalize">Sign Out</div>
           </v-btn>
-        </v-card-actions>
+        </div>
       </v-card>
     </template>
   </v-dialog>

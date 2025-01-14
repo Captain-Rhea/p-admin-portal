@@ -23,12 +23,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
-    <!-- <LayoutsNavbar /> -->
-    <main>
+  <div class="w-full h-screen bg-slate-900 flex py-2 pr-2">
+    <LayoutsSidebar />
+    <main class="bg-white w-full rounded-lg">
       <slot />
     </main>
-    <!-- <LayoutsFooter /> -->
 
     <LayoutsPageLoading />
     <LayoutsServerError />
