@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 export default defineNuxtPlugin((nuxtApp) => {
+  const appStore = useAppStore();
+
   const runtimeConfig = useRuntimeConfig();
 
   const mainApi = axios.create({
@@ -23,9 +25,29 @@ export default defineNuxtPlugin((nuxtApp) => {
         return response;
       },
       (error: any) => {
+        // กรณี 401: Unauthorized
         if (error.response?.status === 401) {
           window.location.href = '/auth/sign-in';
         }
+
+        // กรณี 500: Internal Server Error
+        if (error.response?.status === 500) {
+          appStore.disableApp();
+          appStore.enableServerError();
+        }
+
+        // กรณีที่เซิร์ฟเวอร์ไม่ตอบสนอง
+        if (error.code === 'ECONNABORTED') {
+          appStore.disableApp();
+          appStore.enableServerError();
+        }
+
+        // กรณี Network Error (เช่น เซิร์ฟเวอร์ไม่สามารถเข้าถึงได้)
+        if (!error.response) {
+          console.error('Server not responding or network error');
+          appStore.enableServerError();
+        }
+
         return Promise.reject(error);
       }
     );

@@ -9,7 +9,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="pt-[80px]">
+  <div class="p-4">
     <h1 class="text-3xl">Page Accept</h1>
     <p>
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugiat vero

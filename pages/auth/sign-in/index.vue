@@ -31,16 +31,14 @@ const snackbar = ref<boolean>(false);
 const handleLogin = async () => {
   const isValid = await loginForm.value.validate();
   if (isValid.valid) {
-    isLoading.value = true;
     try {
       isLoading.value = true;
       await login(email.value, password.value);
       appStore.enableApp();
       navigateTo('/');
     } catch (error) {
-      snackbar.value = true;
-    } finally {
       isLoading.value = false;
+      snackbar.value = true;
     }
   }
 };

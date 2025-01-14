@@ -31,6 +31,7 @@ onMounted(async () => {
     <!-- <LayoutsFooter /> -->
 
     <LayoutsPageLoading />
+    <LayoutsServerError />
     <BaseGoToTopButton />
   </div>
 </template>
