@@ -2,10 +2,6 @@
 useHead({
   titleTemplate: 'Dashboard - %s',
 });
-
-definePageMeta({
-  middleware: 'auth',
-});
 </script>
 
 <template>

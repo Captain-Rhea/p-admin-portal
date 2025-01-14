@@ -1,33 +1,21 @@
 export const useAuth = () => {
-  const { $idpApi }: any = useNuxtApp();
+  const { $mainApi }: any = useNuxtApp();
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await $idpApi.post('/v1/auth/login', {
+      const response = await $mainApi.post('/v1/auth/login', {
         email,
         password,
       });
-      const token = useCookie('_app_scope');
-      token.value = response.data.data.token;
       return response.data;
     } catch (error) {
       throw error;
     }
   };
 
-  const isLogin = async (getToken: any) => {
+  const isLogin = async () => {
     try {
-      const response = await $idpApi.post(
-        '/v1/auth/is-login',
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${getToken}`,
-          },
-        }
-      );
-      const token = useCookie('_app_scope');
-      token.value = response.data.data.token;
+      const response = await $mainApi.get('/v1/auth/is-login');
       return response.data;
     } catch (error) {
       throw error;

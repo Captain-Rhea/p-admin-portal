@@ -5,14 +5,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   const mainApi = axios.create({
     baseURL: runtimeConfig.public.mainApi,
-  });
-
-  const idpApi = axios.create({
-    baseURL: runtimeConfig.public.idpApi,
-  });
-
-  const storageApi = axios.create({
-    baseURL: runtimeConfig.public.storageApi,
+    withCredentials: true,
   });
 
   const addInterceptors = (instance: any) => {
@@ -31,17 +24,14 @@ export default defineNuxtPlugin((nuxtApp) => {
       },
       (error: any) => {
         if (error.response?.status === 401) {
-          console.log('Unauthorized! Redirecting to login...');
-          window.location.href = '/auth/login';
+          window.location.href = '/auth/sign-in';
         }
         return Promise.reject(error);
       }
     );
   };
 
-  [mainApi, idpApi, storageApi].forEach(addInterceptors);
+  addInterceptors(mainApi);
 
   nuxtApp.provide('mainApi', mainApi);
-  nuxtApp.provide('idpApi', idpApi);
-  nuxtApp.provide('storageApi', storageApi);
 });

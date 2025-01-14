@@ -1,10 +1,10 @@
 {
-  "name": "rhea-website",
+  "name": "admin-protal",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev -p 3000",
+    "dev": "nuxt dev -p 4000",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
