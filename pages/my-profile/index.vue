@@ -1,12 +1,12 @@
 <script setup lang="ts">
 useHead({
-  titleTemplate: 'Members - %s',
+  titleTemplate: 'My Profile - %s',
 });
 </script>
 
 <template>
   <div>
-    <h1 class="text-3xl">Members Page</h1>
+    <h1 class="text-3xl">My Profile</h1>
     <p>
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugiat vero
       beatae eaque, quo perspiciatis porro velit praesentium a eius aperiam

@@ -27,7 +27,12 @@ const confirmSignOut = async () => {
 </script>
 
 <template>
-  <v-dialog v-model="isDialogOpen" :persistent="isLoading" max-width="400">
+  <v-dialog
+    v-model="isDialogOpen"
+    :persistent="isLoading"
+    transition="dialog-bottom-transition"
+    max-width="400"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
