@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAppStore } from '~/stores/appStore';
+
+// ใช้ Pinia Store
+const appStore = useAppStore();
+
+// คำนวณค่า sidebarMiniMode
+const sidebarMiniMode = computed(() => appStore.sidebarMiniMode);
 
 // เมนูรายการ
 const menuList = [
@@ -20,7 +27,7 @@ const menuList = [
   },
   {
     type: 'menu',
-    icon: 'image-multiple-outline',
+    icon: 'application-edit-outline',
     name: 'Page Management',
     path: null,
     submenu: [
@@ -101,12 +108,28 @@ const isActive = (path: any, submenu: Array<any> | undefined = []) => {
   }
   return path === '/' ? route.path === '/' : route.path.startsWith(path);
 };
+
+watch(
+  () => appStore.sidebarMiniMode,
+  (newVal, oldVal) => {
+    if (newVal) {
+      expandedMenus.value = [];
+    }
+  }
+);
 </script>
 
 <template>
-  <div class="w-[250px] px-4 flex flex-col">
-    <div class="py-8">
-      <LogoComponentRheaSemi class="w-[180px] mx-auto" />
+  <div
+    :class="{
+      'w-[80px]': sidebarMiniMode,
+      'w-[250px]': !sidebarMiniMode,
+    }"
+    class="transition-all duration-300 px-4 flex flex-col"
+  >
+    <div :class="sidebarMiniMode ? 'py-4' : 'py-8'">
+      <LogoComponentRheaSemi v-if="!sidebarMiniMode" />
+      <LogoComponentSymbol v-else />
     </div>
 
     <!-- Menu List -->
@@ -115,9 +138,10 @@ const isActive = (path: any, submenu: Array<any> | undefined = []) => {
         <!-- Caption -->
         <div
           v-if="item.type === 'caption'"
-          class="text-white/40 py-2 uppercase text-xs mt-4"
+          :class="!sidebarMiniMode ? 'mt-4' : 'text-center mt-0'"
+          class="text-white/40 py-2 uppercase text-xs"
         >
-          {{ item.name }}
+          {{ !sidebarMiniMode ? item.name : '------' }}
         </div>
 
         <!-- Menu -->
@@ -125,32 +149,42 @@ const isActive = (path: any, submenu: Array<any> | undefined = []) => {
           <!-- เมนูที่มี Submenu -->
           <div
             v-if="item.submenu"
-            @click="toggleSubmenu(item.name)"
+            @click="!sidebarMiniMode && toggleSubmenu(item.name)"
             :class="{
               'text-white hover:bg-slate-800': isActive(null, item.submenu),
               'text-white/60 hover:bg-slate-800': !isActive(null, item.submenu),
+              'justify-center': sidebarMiniMode,
             }"
             class="flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded-lg cursor-pointer"
           >
-            <v-icon>mdi-{{ item.icon }}</v-icon>
-            <div class="flex-1">{{ item.name }}</div>
-            <v-icon>
+            <v-icon :class="{ hidden: sidebarMiniMode }">
+              mdi-{{ item.icon }}
+            </v-icon>
+            <div v-if="!sidebarMiniMode" class="flex-1">{{ item.name }}</div>
+            <v-icon v-if="!sidebarMiniMode">
               mdi-chevron-{{ isMenuExpanded(item.name) ? 'up' : 'down' }}
             </v-icon>
           </div>
 
           <!-- เมนูที่ไม่มี Submenu -->
-          <NuxtLink
-            v-else
-            :to="item.path"
-            :class="{
-              'bg-primary text-white hover:bg-primary': isActive(item.path),
-            }"
-            class="text-white/60 flex items-center gap-2 w-full bg-slate-800/50 p-2 rounded-lg hover:text-white/80 hover:bg-slate-800"
-          >
-            <v-icon>mdi-{{ item.icon }}</v-icon>
-            <div class="capitalize">{{ item.name }}</div>
-          </NuxtLink>
+          <v-tooltip v-else :text="item.name">
+            <template v-slot:activator="{ props }">
+              <NuxtLink
+                v-bind="sidebarMiniMode && props"
+                :to="item.path"
+                :class="{
+                  'bg-primary text-white hover:bg-primary': isActive(item.path),
+                  'justify-center': sidebarMiniMode,
+                }"
+                class="text-white/60 flex items-center gap-2 w-full bg-slate-800/50 p-2 rounded-lg hover:text-white/80 hover:bg-slate-800"
+              >
+                <v-icon> mdi-{{ item.icon }} </v-icon>
+                <div v-if="!sidebarMiniMode" class="capitalize">
+                  {{ item.name }}
+                </div>
+              </NuxtLink>
+            </template>
+          </v-tooltip>
 
           <!-- Submenu -->
           <transition name="fade-slide" mode="out-in">
@@ -187,7 +221,9 @@ const isActive = (path: any, submenu: Array<any> | undefined = []) => {
     </div>
 
     <!-- Footer -->
-    <div class="text-white/60 text-xs pt-8 pb-4">Powered By RHEA SOLUTION</div>
+    <div v-if="!sidebarMiniMode" class="text-white/60 text-xs pt-8 pb-4">
+      Powered By RHEA SOLUTION
+    </div>
   </div>
 </template>
 

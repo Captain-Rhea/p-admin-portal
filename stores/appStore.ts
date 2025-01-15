@@ -4,6 +4,7 @@ export const useAppStore = defineStore('appStore', {
   state: () => ({
     serverError: false,
     appStatus: false,
+    sidebarMiniMode: false,
   }),
   actions: {
     enableServerError() {
@@ -20,6 +21,14 @@ export const useAppStore = defineStore('appStore', {
 
     disableApp() {
       this.appStatus = false;
+    },
+
+    enableSidebarMiniMode() {
+      this.sidebarMiniMode = true;
+    },
+
+    disableSidebarMiniMode() {
+      this.sidebarMiniMode = false;
     },
   },
 });
