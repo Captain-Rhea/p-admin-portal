@@ -127,10 +127,10 @@ const isActive = (path: any, submenu: Array<any> | undefined = []) => {
             v-if="item.submenu"
             @click="toggleSubmenu(item.name)"
             :class="{
-              'text-white hover:bg-slate-700': isActive(null, item.submenu),
-              'text-white/60 hover:bg-slate-700': !isActive(null, item.submenu),
+              'text-white hover:bg-slate-800': isActive(null, item.submenu),
+              'text-white/60 hover:bg-slate-800': !isActive(null, item.submenu),
             }"
-            class="flex items-center gap-2 w-full bg-slate-800 p-2 rounded-lg cursor-pointer"
+            class="flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded-lg cursor-pointer"
           >
             <v-icon>mdi-{{ item.icon }}</v-icon>
             <div class="flex-1">{{ item.name }}</div>
@@ -144,11 +144,9 @@ const isActive = (path: any, submenu: Array<any> | undefined = []) => {
             v-else
             :to="item.path"
             :class="{
-              'bg-primary-base text-white hover:bg-primary-base': isActive(
-                item.path
-              ),
+              'bg-primary text-white hover:bg-primary': isActive(item.path),
             }"
-            class="text-white/60 flex items-center gap-2 w-full bg-slate-800 p-2 rounded-lg hover:text-white/80 hover:bg-slate-700"
+            class="text-white/60 flex items-center gap-2 w-full bg-slate-800/50 p-2 rounded-lg hover:text-white/80 hover:bg-slate-800"
           >
             <v-icon>mdi-{{ item.icon }}</v-icon>
             <div class="capitalize">{{ item.name }}</div>
@@ -172,10 +170,11 @@ const isActive = (path: any, submenu: Array<any> | undefined = []) => {
                   :key="subIndex"
                   :to="subItem.path"
                   :class="{
-                    'bg-primary-base text-white hover:bg-primary-base':
-                      isActive(subItem.path),
+                    'bg-primary text-white hover:bg-primary': isActive(
+                      subItem.path
+                    ),
                   }"
-                  class="text-white/60 flex items-center gap-2 w-full bg-slate-700 p-2 rounded-lg hover:text-white/80 hover:bg-slate-600"
+                  class="text-white/60 flex items-center gap-2 w-full bg-slate-800/50 p-2 rounded-lg hover:text-white/80 hover:bg-slate-800"
                 >
                   <v-icon>mdi-{{ subItem.icon }}</v-icon>
                   <div class="capitalize">{{ subItem.name }}</div>
