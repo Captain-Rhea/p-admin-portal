@@ -128,12 +128,15 @@ watch(
     class="transition-all duration-300 px-4 flex flex-col"
   >
     <div :class="sidebarMiniMode ? 'py-4' : 'py-8'">
-      <LogoComponentRheaSemi v-if="!sidebarMiniMode" />
+      <LogoComponentRheaSemi
+        v-if="!sidebarMiniMode"
+        class="w-[180px] mx-auto"
+      />
       <LogoComponentSymbol v-else />
     </div>
 
     <!-- Menu List -->
-    <div class="space-y-1 flex-1 overflow-auto">
+    <div class="space-y-1 flex-1">
       <div v-for="(item, index) in menuList" :key="index">
         <!-- Caption -->
         <div

@@ -1,34 +1,16 @@
-<script setup lang="ts">
-import { useAppStore } from '~/stores/appStore';
-
-const appStore = useAppStore();
-const sidebarMiniMode = computed(() => appStore.sidebarMiniMode);
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div class="w-full pb-2 border-b flex items-center justify-between">
+  <div class="w-full border-b flex items-center justify-between h-[50px]">
     <div>
-      <v-btn
-        v-if="!sidebarMiniMode"
-        size="small"
-        icon
-        flat
-        @click="appStore.enableSidebarMiniMode()"
-      >
-        <v-icon>mdi-menu-open</v-icon>
-      </v-btn>
-      <v-btn
-        v-else
-        size="small"
-        icon
-        flat
-        @click="appStore.disableSidebarMiniMode()"
-      >
-        <v-icon>mdi-menu-close</v-icon>
-      </v-btn>
+      <DialogsAppSearch />
     </div>
 
-    <div>
+    <div class="flex items-center gap-4">
+      <BaseFullScreenAction />
+      <div class="text-slate-500 cursor-pointer hover:text-slate-800">
+        <v-icon>mdi-bell-outline</v-icon>
+      </div>
       <DialogsSignOut />
     </div>
   </div>
