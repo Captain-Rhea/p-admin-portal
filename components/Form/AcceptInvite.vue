@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps({
+import { useMembers } from '~/components/Api/useMembers';
+
+const props = defineProps({
   recipientEmail: {
     type: String,
     default: '',
@@ -8,7 +10,13 @@ defineProps({
     type: String,
     default: '',
   },
+  refCode: {
+    type: String,
+    default: '',
+  },
 });
+
+const { memberInviteAccept } = useMembers();
 
 const tab = ref<string>('account');
 
@@ -18,6 +26,7 @@ const tabList = [
   { name: 'Confirm', value: 'confirm' },
 ];
 
+const snackbar = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 
 const passwordForm = ref();
@@ -45,13 +54,55 @@ watch(passwordConfirm, (newVal, oldVal) => {
 });
 
 const profileForm = ref();
-const firstName = ref<string>('');
-const lastName = ref<string>('');
+const mobilePhone = ref<string>('');
+const firstNameTh = ref<string>('');
+const lastNameTh = ref<string>('');
+const nicknameTh = ref<string>('');
+const firstNameEn = ref<string>('');
+const lastNameEn = ref<string>('');
+const nicknameEn = ref<string>('');
+
+const handleCheckProfile = async () => {
+  const isValidate = await profileForm.value.validate();
+  if (isValidate.valid) {
+    tab.value = 'confirm';
+  }
+};
+
+const thaiPhoneFormat = (phone: string): string => {
+  if (phone.length === 10 && /^[0-9]+$/.test(phone)) {
+    return `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6)}`;
+  }
+  return phone;
+};
+
+const handleCreateAccount = async () => {
+  try {
+    isLoading.value = true;
+    await memberInviteAccept(
+      props.refCode,
+      props.recipientEmail,
+      password.value,
+      props.roleName,
+      mobilePhone.value,
+      firstNameTh.value,
+      lastNameTh.value,
+      nicknameTh.value,
+      firstNameEn.value,
+      lastNameEn.value,
+      nicknameEn.value
+    );
+    navigateTo('/auth/sign-in');
+  } catch (error: any) {
+    snackbar.value = true;
+    isLoading.value = false;
+  }
+};
 </script>
 
 <template>
-  <div>
-    <div class="flex gap-2 p-2 bg-gray-50 rounded-md">
+  <div class="p-4">
+    <div class="flex gap-2 p-2">
       <div
         v-for="(item, index) in tabList"
         :key="index"
@@ -66,7 +117,8 @@ const lastName = ref<string>('');
       </div>
     </div>
 
-    <v-tabs-window v-model="tab">
+    <v-tabs-window v-model="tab" class="border rounded-lg">
+      <!-- Account Tab -->
       <v-tabs-window-item value="account" class="p-4">
         <div class="text-left">
           <div class="mb-4">
@@ -76,7 +128,7 @@ const lastName = ref<string>('');
               <strong>Role:</strong> {{ roleName || '-' }}
             </p>
           </div>
-          <v-form ref="passwordForm" :disabled="isLoading" class="space-y-2">
+          <v-form ref="passwordForm" class="space-y-4">
             <v-text-field
               v-model="password"
               :rules="[
@@ -93,6 +145,7 @@ const lastName = ref<string>('');
               label="Enter Password"
               density="compact"
               variant="outlined"
+              maxlength="250"
               required
               @click:append-inner="visible = !visible"
             />
@@ -109,6 +162,7 @@ const lastName = ref<string>('');
               label="Confirm Password"
               density="compact"
               variant="outlined"
+              maxlength="250"
               required
               @click:append-inner="visibleConfirm = !visibleConfirm"
             />
@@ -129,21 +183,108 @@ const lastName = ref<string>('');
 
       <!-- Profile Tab -->
       <v-tabs-window-item value="profile" class="p-4">
-        <div class="text-left">
+        <v-form ref="profileForm" class="space-y-2">
           <h2 class="text-lg font-semibold mb-2">Setup your profile</h2>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat
-            voluptates consectetur minus doloribus fugit? Repellendus nostrum
-            veritatis excepturi necessitatibus sequi iste maxime, itaque,
-            asperiores optio in tenetur! Officiis, ratione? Perspiciatis.
-          </p>
-        </div>
+          <div class="space-y-2">
+            <div class="pt-4">
+              <v-text-field
+                v-model="mobilePhone"
+                :rules="[(v) => !!v || 'Required!']"
+                color="primary"
+                label="Mobile Phone"
+                density="compact"
+                variant="outlined"
+                maxlength="30"
+                required
+              />
+            </div>
+
+            <v-divider class="border-gray-800" />
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="col-span-2 text-lg">Enter thai profile</div>
+              <v-text-field
+                v-model="firstNameTh"
+                :rules="[(v) => !!v || 'Required!']"
+                color="primary"
+                label="First Name (TH)"
+                density="compact"
+                variant="outlined"
+                maxlength="250"
+                required
+              />
+              <v-text-field
+                v-model="lastNameTh"
+                :rules="[(v) => !!v || 'Required!']"
+                color="primary"
+                label="Last Name (TH)"
+                density="compact"
+                variant="outlined"
+                maxlength="250"
+                required
+              />
+              <v-text-field
+                v-model="nicknameTh"
+                :rules="[(v) => !!v || 'Required!']"
+                color="primary"
+                label="Nickname (TH)"
+                density="compact"
+                variant="outlined"
+                class="col-span-2"
+                maxlength="250"
+                required
+              />
+            </div>
+
+            <v-divider class="border-gray-800" />
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="col-span-2 text-lg">Enter english profile</div>
+              <v-text-field
+                v-model="firstNameEn"
+                :rules="[(v) => !!v || 'Required!']"
+                color="primary"
+                label="First Name (EN)"
+                density="compact"
+                variant="outlined"
+                maxlength="250"
+                required
+              />
+              <v-text-field
+                v-model="lastNameEn"
+                :rules="[(v) => !!v || 'Required!']"
+                color="primary"
+                label="Last Name (EN)"
+                density="compact"
+                variant="outlined"
+                maxlength="250"
+                required
+              />
+              <v-text-field
+                v-model="nicknameEn"
+                :rules="[(v) => !!v || 'Required!']"
+                color="primary"
+                label="Nickname (EN)"
+                density="compact"
+                variant="outlined"
+                class="col-span-2"
+                maxlength="250"
+                required
+              />
+            </div>
+          </div>
+        </v-form>
         <div class="flex justify-between mt-4">
           <v-btn variant="tonal" class="pl-3" flat @click="tab = 'account'">
             <v-icon>mdi-chevron-left</v-icon>
             <div class="capitalize ml-2">back</div>
           </v-btn>
-          <v-btn color="primary" class="pr-3" flat @click="tab = 'confirm'">
+          <v-btn
+            color="primary"
+            class="pr-3"
+            flat
+            @click="handleCheckProfile()"
+          >
             <div class="capitalize mr-2">next</div>
             <v-icon>mdi-chevron-right</v-icon>
           </v-btn>
@@ -152,28 +293,102 @@ const lastName = ref<string>('');
 
       <!-- Confirm Tab -->
       <v-tabs-window-item value="confirm" class="p-4">
-        <div class="text-left">
+        <div class="space-y-2">
           <h2 class="text-lg font-semibold mb-2">Confirm your setup</h2>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat
-            voluptates consectetur minus doloribus fugit? Repellendus nostrum
-            veritatis excepturi necessitatibus sequi iste maxime, itaque,
-            asperiores optio in tenetur! Officiis, ratione? Perspiciatis.
-          </p>
+          <div class="mt-4">
+            <div class="flex">
+              <strong class="min-w-[120px]">Email :</strong>
+              <div class="flex-1 truncate">
+                {{ recipientEmail }}
+              </div>
+            </div>
+            <div class="flex">
+              <strong class="min-w-[120px]">Role :</strong>
+              <div class="flex-1 truncate capitalize">
+                {{ roleName }}
+              </div>
+            </div>
+
+            <div class="flex mt-4">
+              <strong class="min-w-[120px]">Mobile Phone :</strong>
+              <div class="flex-1 truncate capitalize">
+                {{ thaiPhoneFormat(mobilePhone) }}
+              </div>
+            </div>
+
+            <div class="flex mt-4">
+              <strong class="min-w-[120px]">Full Name (TH) :</strong>
+              <div class="flex-1 truncate capitalize">
+                {{ firstNameTh }}
+                {{ lastNameTh }}
+              </div>
+            </div>
+            <div class="flex">
+              <strong class="min-w-[120px]">Nickname (TH) :</strong>
+              <div class="flex-1 truncate capitalize">
+                {{ nicknameTh }}
+              </div>
+            </div>
+
+            <div class="flex mt-4">
+              <strong class="min-w-[120px]">Full Name (EN) :</strong>
+              <div class="flex-1 truncate capitalize">
+                {{ firstNameEn }}
+                {{ lastNameEn }}
+              </div>
+            </div>
+            <div class="flex">
+              <strong class="min-w-[120px]">Nickname (EN) :</strong>
+              <div class="flex-1 truncate capitalize">
+                {{ nicknameEn }}
+              </div>
+            </div>
+          </div>
         </div>
         <div class="flex justify-between mt-4">
-          <v-btn variant="tonal" class="pl-3" flat @click="tab = 'profile'">
+          <v-btn
+            :disabled="isLoading"
+            variant="tonal"
+            class="pl-3"
+            flat
+            @click="tab = 'profile'"
+          >
             <v-icon>mdi-chevron-left</v-icon>
             <div class="capitalize ml-2">back</div>
           </v-btn>
 
-          <button
-            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          <v-btn
+            :loading="isLoading"
+            color="success"
+            flat
+            @click="handleCreateAccount()"
           >
-            Confirm
-          </button>
+            <div class="capitalize">confirm</div>
+          </v-btn>
         </div>
       </v-tabs-window-item>
     </v-tabs-window>
+
+    <!-- Snackbar -->
+    <v-snackbar
+      v-model="snackbar"
+      color="#ffffff"
+      location="bottom"
+      max-width="450"
+      vertical
+    >
+      <div class="pb-2 text-red-500 text-lg font-semibold">
+        Registration Failed!
+      </div>
+      <p>
+        Something went wrong while processing your registration. Please try
+        again or contact support if the issue persists.
+      </p>
+      <template v-slot:actions>
+        <v-btn variant="tonal" color="error" @click="snackbar = false">
+          <div class="capitalize">Close</div>
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>

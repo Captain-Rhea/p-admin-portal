@@ -39,11 +39,7 @@ const checkMemberInviteVerify = async () => {
     recipientEmail.value = data.recipient_email;
     role.value = data.role;
   } catch (error: any) {
-    if (error.response && error.response.status === 400) {
-      displayStatus.value = 'expired';
-    } else {
-      console.error(error);
-    }
+    displayStatus.value = 'expired';
   }
 };
 
@@ -82,8 +78,12 @@ const checkLogin = async () => {
       </v-btn>
     </div>
 
-    <div v-else-if="displayStatus === 'success'" class="w-[400px]">
-      <FormAcceptInvite :recipientEmail="recipientEmail" :roleName="role" />
+    <div v-else-if="displayStatus === 'success'" class="w-[450px]">
+      <FormAcceptInvite
+        :recipientEmail="recipientEmail"
+        :roleName="role"
+        :refCode="refCode"
+      />
     </div>
 
     <LayoutsPageLoading />

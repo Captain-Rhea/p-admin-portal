@@ -56,7 +56,7 @@ export const useMembers = () => {
     nicknameEn: string
   ) => {
     try {
-      const inviteData = {
+      const response = await $mainApi.post('/v1/member/invite/accept', {
         ref_code: refCode,
         recipient_email: recipientEmail,
         password: password,
@@ -68,12 +68,7 @@ export const useMembers = () => {
         first_name_en: firstNameEn,
         last_name_en: lastNameEn,
         nickname_en: nicknameEn,
-      };
-
-      const response = await $mainApi.post(
-        '/v1/member/invite/accept',
-        inviteData
-      );
+      });
       return response.data;
     } catch (error) {
       throw error;

@@ -98,12 +98,13 @@ onMounted(async () => {
       :items-per-page="5"
       hide-default-footer
       item-value="user_id"
+      class="border-b"
     >
       <template v-slot:item="{ item }">
         <tr>
-          <td class="py-4">
-            <div class="flex gap-1">
-              <v-avatar color="primary">
+          <td class="py-3">
+            <div class="flex">
+              <v-avatar color="primary" class="mr-3">
                 <v-img
                   v-if="item.user_info.avatar_base_url"
                   :src="item.user_info.avatar_base_url"
