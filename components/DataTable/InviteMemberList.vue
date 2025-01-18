@@ -1,52 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
 import { useMembers } from '~/components/Api/useMembers';
 
-interface Role {
-  role_id: number;
-  name: string;
-  description: string;
-}
-
-interface Status {
-  id: number;
-  name: string;
-}
-
-interface UserInfo {
-  avatar_base_url: string | null;
-  avatar_id: string | null;
-  avatar_lazy_url: string | null;
-  phone: string;
-}
-
-interface UserInfoTranslation {
-  first_name: string;
-  last_name: string;
-  nickname: string;
-  language_code: string;
-  updated_at: string;
-}
-
-interface UserData {
-  created_at: string;
-  updated_at: string;
-  email: string;
-  user_id: number;
-  roles: Role[];
-  status: Status;
-  user_info: UserInfo;
-  user_info_translation: UserInfoTranslation[];
-}
-
-interface Pagination {
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-}
-
-const { getMembers } = useMembers();
+const { getMemberInvite } = useMembers();
 
 const headers = ref<any>([
   {
@@ -63,17 +18,18 @@ const headers = ref<any>([
 
 const desserts = ref<any[]>([]);
 
-const handleGetMembers = async () => {
+const handleGetInvites = async () => {
   try {
-    const response = await getMembers();
+    const response = await getMemberInvite();
     desserts.value = response.data.data;
+    console.log(response.data.data);
   } catch (error: any) {
     console.error(error.response);
   }
 };
 
 onMounted(async () => {
-  await handleGetMembers();
+  await handleGetInvites();
 });
 </script>
 
@@ -81,13 +37,10 @@ onMounted(async () => {
   <div>
     <div class="flex items-center justify-between mt-4 mb-2 px-2">
       <div class="flex-1">
-        <h1 class="text-3xl">Members</h1>
+        <h1 class="text-3xl">Invite Members</h1>
       </div>
       <div class="flex-1 flex items-center justify-end">
-        <v-btn color="primary" class="pl-3" flat>
-          <v-icon>mdi-plus</v-icon>
-          <div class="capitalize ml-2">create</div>
-        </v-btn>
+        <DialogsInviteMember />
       </div>
     </div>
 
@@ -97,7 +50,6 @@ onMounted(async () => {
       :items="desserts"
       :items-per-page="5"
       hide-default-footer
-      item-value="user_id"
     >
       <template v-slot:item="{ item }">
         <tr>

@@ -8,9 +8,6 @@
 
     <div class="flex items-center gap-4">
       <BaseFullScreenAction />
-      <div class="text-slate-500 cursor-pointer hover:text-slate-800">
-        <v-icon>mdi-bell-outline</v-icon>
-      </div>
       <DialogsSignOut />
     </div>
   </div>

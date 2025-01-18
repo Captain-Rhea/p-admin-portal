@@ -2,12 +2,6 @@ import type { NuxtPage } from 'nuxt/schema';
 
 export default defineNuxtConfig({
   ssr: true,
-  // nitro: {
-  //   // preset: 'static',
-  //   prerender: {
-  //     routes: [],
-  //   },
-  // },
   app: {
     head: {
       charset: 'utf-8',
@@ -57,6 +51,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       mainApi: 'http://localhost:4100',
+      // mainApi: 'https://main.in-spect-pro.com',
     },
   },
   modules: [

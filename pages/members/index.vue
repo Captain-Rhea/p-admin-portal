@@ -5,8 +5,8 @@ useHead({
 </script>
 
 <template>
-  <div>
-    <h1 class="text-3xl">Members Page</h1>
+  <div class="space-y-16">
     <DataTableMemberList />
+    <DataTableInviteMemberList />
   </div>
 </template>
