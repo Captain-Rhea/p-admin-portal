@@ -1,9 +1,15 @@
 export const useMembers = () => {
   const { $mainApi }: any = useNuxtApp();
 
-  const getMembers = async () => {
+  const getMembers = async (statusId = '1,2') => {
     try {
-      const response = await $mainApi.get('/v1/member');
+      const response = await $mainApi.get('/v1/member', {
+        params: {
+          page: '1',
+          per_page: '100',
+          status_id: statusId,
+        },
+      });
       return response.data;
     } catch (error) {
       throw error;
@@ -117,20 +123,11 @@ export const useMembers = () => {
     }
   };
 
-  const activeMember = async (userId: number) => {
+  const activateMember = async (userId: number) => {
     try {
       const response = await $mainApi.put(
         `/v1/member/active/${userId.toString()}`
       );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const deleteMember = async (userId: number) => {
-    try {
-      const response = await $mainApi.delete(`/v1/member/${userId.toString()}`);
       return response.data;
     } catch (error) {
       throw error;
@@ -159,6 +156,15 @@ export const useMembers = () => {
     }
   };
 
+  const permanentlyDeleteMember = async (userId: number) => {
+    try {
+      const response = await $mainApi.delete(`/v1/member/${userId.toString()}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const changeRoleMember = async (userId: number, newRole: number) => {
     try {
       const response = await $mainApi.put(
@@ -181,10 +187,10 @@ export const useMembers = () => {
     memberInviteAccept,
     createMember,
     suspendMember,
-    activeMember,
-    deleteMember,
+    activateMember,
     softDeleteMember,
     restoreMember,
+    permanentlyDeleteMember,
     changeRoleMember,
   };
 };

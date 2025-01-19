@@ -1,8 +1,8 @@
 import axios from 'axios';
+import { useAuth } from '~/components/Api/useAuth';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const appStore = useAppStore();
-
   const runtimeConfig = useRuntimeConfig();
 
   const mainApi = axios.create({
@@ -24,10 +24,17 @@ export default defineNuxtPlugin((nuxtApp) => {
       (response: any) => {
         return response;
       },
-      (error: any) => {
+      async (error: any) => {
         // กรณี 401: Unauthorized
+        const { forceLogout } = useAuth();
         if (error.response?.status === 401) {
-          window.location.href = '/auth/sign-in';
+          try {
+            await forceLogout();
+            return navigateTo('/auth/sign-in');
+          } catch (error) {
+            appStore.disableApp();
+            appStore.enableServerError();
+          }
         }
 
         // กรณี 500: Internal Server Error

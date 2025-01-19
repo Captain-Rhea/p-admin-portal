@@ -2,50 +2,6 @@
 import { ref, onMounted } from 'vue';
 import { useMembers } from '~/components/Api/useMembers';
 
-interface Role {
-  role_id: number;
-  name: string;
-  description: string;
-}
-
-interface Status {
-  id: number;
-  name: string;
-}
-
-interface UserInfo {
-  avatar_base_url: string | null;
-  avatar_id: string | null;
-  avatar_lazy_url: string | null;
-  phone: string;
-}
-
-interface UserInfoTranslation {
-  first_name: string;
-  last_name: string;
-  nickname: string;
-  language_code: string;
-  updated_at: string;
-}
-
-interface UserData {
-  created_at: string;
-  updated_at: string;
-  email: string;
-  user_id: number;
-  roles: Role[];
-  status: Status;
-  user_info: UserInfo;
-  user_info_translation: UserInfoTranslation[];
-}
-
-interface Pagination {
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-}
-
 const { getMembers } = useMembers();
 
 const headers = ref<any>([
@@ -82,10 +38,6 @@ const handleOnSuccess = async (event: boolean) => {
   if (event) await handleGetMembers();
 };
 
-const isLoading = ref<boolean>(false);
-
-const isConfirmDialog = ref<boolean>(false);
-
 // Change Member role
 const dialogsChangeRoleMember = ref<boolean>(false);
 const dialogsChangeRoleMemberActionData = ref();
@@ -96,6 +48,41 @@ const handleDialogsChangeRoleMemberSuccess = async (event: boolean) => {
 // Reset Password
 const dialogsResetPasswordMember = ref<boolean>(false);
 const dialogsResetPasswordActionData = ref();
+
+// Suspend Member
+const dialogsSuspendMember = ref<boolean>(false);
+const dialogsSuspendActionData = ref();
+const handleDialogsSuspendMemberSuccess = async (event: boolean) => {
+  if (event) await handleGetMembers();
+};
+
+// Activate Member
+const dialogsActivateMember = ref<boolean>(false);
+const dialogsActivateActionData = ref();
+const handleDialogsActivateMemberSuccess = async (event: boolean) => {
+  if (event) await handleGetMembers();
+};
+
+// Soft Delete Member
+const dialogsSoftDeleteMember = ref<boolean>(false);
+const dialogsSoftDeleteActionData = ref();
+const handleDialogsSoftDeleteMemberSuccess = async (event: boolean) => {
+  if (event) await handleGetMembers();
+};
+
+// Permanently Delete Member
+const dialogsPermanentlyDeleteMember = ref<boolean>(false);
+const dialogsPermanentlyDeleteActionData = ref();
+const handleDialogsPermanentlyDeleteMemberSuccess = async (event: boolean) => {
+  if (event) await handleGetMembers();
+};
+
+// Restore Delete Member
+const dialogsRestoreDeleteMember = ref<boolean>(false);
+const dialogsRestoreDeleteActionData = ref();
+const handleDialogsRestoreDeleteMemberSuccess = async (event: boolean) => {
+  if (event) await handleGetMembers();
+};
 </script>
 
 <template>
@@ -171,7 +158,16 @@ const dialogsResetPasswordActionData = ref();
 
           <td>
             <div
-              class="capitalize bg-green-50 text-green-500 w-fit px-3 py-1 rounded-md"
+              :class="
+                item.status.id === 1
+                  ? 'bg-green-50 text-green-500'
+                  : item.status.id === 2
+                  ? 'bg-gray-50 text-gray-400'
+                  : item.status.id === 3
+                  ? 'bg-red-50 text-red-400'
+                  : 'bg-gray-50 text-gray-400'
+              "
+              class="capitalize w-fit px-3 py-1 rounded-md"
             >
               {{ item.status.name }}
             </div>
@@ -209,17 +205,61 @@ const dialogsResetPasswordActionData = ref();
                       })
                   "
                 />
-                <BaseMenuItem label="Active" icon="account-check-outline" />
-                <BaseMenuItem label="Suspend" icon="account-cancel-outline" />
                 <BaseMenuItem
+                  v-if="item.status.id === 1"
+                  label="Suspend"
+                  icon="account-cancel-outline"
+                  @click="
+                    (dialogsSuspendMember = true),
+                      (dialogsSuspendActionData = {
+                        userId: item.user_id,
+                      })
+                  "
+                />
+                <BaseMenuItem
+                  v-if="item.status.id === 2"
+                  label="Active"
+                  icon="account-check-outline"
+                  @click="
+                    (dialogsActivateMember = true),
+                      (dialogsActivateActionData = {
+                        userId: item.user_id,
+                      })
+                  "
+                />
+                <BaseMenuItem
+                  v-if="item.status.id !== 3"
                   label="Delete"
                   icon="trash-can-outline"
                   variant="soft-delete"
+                  @click="
+                    (dialogsSoftDeleteMember = true),
+                      (dialogsSoftDeleteActionData = {
+                        userId: item.user_id,
+                      })
+                  "
+                />
+                <BaseMenuItem
+                  v-if="item.status.id === 3"
+                  label="Restore Member"
+                  icon="account-convert-outline"
+                  @click="
+                    (dialogsRestoreDeleteMember = true),
+                      (dialogsRestoreDeleteActionData = {
+                        userId: item.user_id,
+                      })
+                  "
                 />
                 <BaseMenuItem
                   label="Permanently Delete"
                   icon="trash-can-outline"
                   variant="delete"
+                  @click="
+                    (dialogsPermanentlyDeleteMember = true),
+                      (dialogsPermanentlyDeleteActionData = {
+                        userId: item.user_id,
+                      })
+                  "
                 />
               </BaseMenuCard>
             </v-menu>
@@ -239,27 +279,34 @@ const dialogsResetPasswordActionData = ref();
       :actionData="dialogsResetPasswordActionData"
     />
 
-    <v-dialog v-model="isConfirmDialog" :persistent="isLoading" max-width="400">
-      <BaseDialogCard>
-        <BaseDialogTitle>Confirm Suspend This User</BaseDialogTitle>
-        <BaseDialogDescription>
-          Are you sure you want to suspend this user? This action will restrict
-          their access to the platform until further notice. Please confirm your
-          decision.
-        </BaseDialogDescription>
-        <BaseDialogActions>
-          <v-btn
-            :disabled="isLoading"
-            variant="tonal"
-            @click="isConfirmDialog = false"
-          >
-            <div class="capitalize">close</div>
-          </v-btn>
-          <v-btn :loading="isLoading" color="warning" flat>
-            <div class="capitalize">Suspend</div>
-          </v-btn>
-        </BaseDialogActions>
-      </BaseDialogCard>
-    </v-dialog>
+    <DialogsSuspendMember
+      v-model:isDialog="dialogsSuspendMember"
+      :actionData="dialogsSuspendActionData"
+      @onSuccess="handleDialogsSuspendMemberSuccess"
+    />
+
+    <DialogsActivateMember
+      v-model:isDialog="dialogsActivateMember"
+      :actionData="dialogsActivateActionData"
+      @onSuccess="handleDialogsActivateMemberSuccess"
+    />
+
+    <DialogsDeleteMember
+      v-model:isDialog="dialogsSoftDeleteMember"
+      :actionData="dialogsSoftDeleteActionData"
+      @onSuccess="handleDialogsSoftDeleteMemberSuccess"
+    />
+
+    <DialogsPermanentlyDeleteMember
+      v-model:isDialog="dialogsPermanentlyDeleteMember"
+      :actionData="dialogsPermanentlyDeleteActionData"
+      @onSuccess="handleDialogsPermanentlyDeleteMemberSuccess"
+    />
+
+    <DialogsRestoreDeletedMember
+      v-model:isDialog="dialogsRestoreDeleteMember"
+      :actionData="dialogsRestoreDeleteActionData"
+      @onSuccess="handleDialogsRestoreDeleteMemberSuccess"
+    />
   </div>
 </template>

@@ -31,6 +31,15 @@ export const useAuth = () => {
     }
   };
 
+  const forceLogout = async () => {
+    try {
+      const response = await $mainApi.post('/v1/auth/force-logout');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const forgotPassword = async (recipientEmail: string) => {
     try {
       const response = await $mainApi.post('/v1/auth/send/forgot-mail', {
@@ -89,6 +98,7 @@ export const useAuth = () => {
     login,
     isLogin,
     logout,
+    forceLogout,
     forgotPassword,
     forgotPasswordVerifyKey,
     forgotPasswordReset,
