@@ -125,7 +125,7 @@ watch(
       'w-[80px]': sidebarMiniMode,
       'w-[250px]': !sidebarMiniMode,
     }"
-    class="transition-all duration-300 px-4 flex flex-col"
+    class="transition-all duration-300 px-4 flex flex-col cursor-default"
   >
     <div :class="sidebarMiniMode ? 'py-4' : 'py-8'">
       <LogoComponentRheaSemi

@@ -73,6 +73,18 @@ export const useAuth = () => {
     }
   };
 
+  const resetPassword = async (userId: number, newPassword: string) => {
+    try {
+      const response = await $mainApi.post('/v1/auth/reset-password', {
+        user_id: userId,
+        new_password: newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     login,
     isLogin,
@@ -80,5 +92,6 @@ export const useAuth = () => {
     forgotPassword,
     forgotPasswordVerifyKey,
     forgotPasswordReset,
+    resetPassword,
   };
 };
