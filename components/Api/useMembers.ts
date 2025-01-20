@@ -1,12 +1,12 @@
 export const useMembers = () => {
   const { $mainApi }: any = useNuxtApp();
 
-  const getMembers = async (statusId = '1,2') => {
+  const getMembers = async (page = '1', statusId = '1,2') => {
     try {
       const response = await $mainApi.get('/v1/member', {
         params: {
-          page: '1',
-          per_page: '100',
+          page: page,
+          per_page: '5',
           status_id: statusId,
         },
       });

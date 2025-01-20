@@ -27,12 +27,7 @@ const confirmSignOut = async () => {
 </script>
 
 <template>
-  <v-dialog
-    v-model="isDialogOpen"
-    :persistent="isLoading"
-    transition="dialog-bottom-transition"
-    max-width="400"
-  >
+  <v-dialog v-model="isDialogOpen" :persistent="isLoading" max-width="400">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
@@ -45,18 +40,16 @@ const confirmSignOut = async () => {
     </template>
 
     <template v-slot:default>
-      <v-card>
-        <v-card-title class="text-h6"> Confirm Sign Out </v-card-title>
-
-        <v-card-text>
+      <BaseDialogCard>
+        <BaseDialogTitle>Confirm Sign Out</BaseDialogTitle>
+        <BaseDialogDescription>
           Are you sure you want to sign out? You will need to log in again to
           access your account.
-        </v-card-text>
-        <div class="flex items-center justify-between px-4 pb-2">
-          <v-btn :disabled="isLoading" variant="text" @click="cancelSignOut">
-            <div class="capitalize">Cancel</div>
+        </BaseDialogDescription>
+        <BaseDialogActions>
+          <v-btn :disabled="isLoading" variant="tonal" @click="cancelSignOut">
+            <div class="capitalize">Close</div>
           </v-btn>
-
           <v-btn
             :loading="isLoading"
             color="error"
@@ -65,8 +58,8 @@ const confirmSignOut = async () => {
           >
             <div class="capitalize">Sign Out</div>
           </v-btn>
-        </div>
-      </v-card>
+        </BaseDialogActions>
+      </BaseDialogCard>
     </template>
   </v-dialog>
 </template>

@@ -4,6 +4,9 @@ import { useMembers } from '~/components/Api/useMembers';
 
 const { getMembers } = useMembers();
 
+const dataLoading = ref<boolean>(false);
+const showDeletedMember = ref<boolean>(false);
+
 const headers = ref<any>([
   {
     title: 'Users',
@@ -18,15 +21,32 @@ const headers = ref<any>([
 ]);
 
 const desserts = ref<any[]>([]);
+const dataTablePage = ref('1');
+const pagination = ref({
+  total: 0,
+  per_page: 10,
+  current_page: 1,
+  last_page: 1,
+});
+const handlePageChange = async (page: number) => {
+  dataTablePage.value = page.toString();
+  await handleGetMembers();
+};
 
 const handleGetMembers = async () => {
   try {
-    const response = await getMembers();
-    desserts.value = response.data.data.filter(
-      (user: any) => user.roles[0].role_id !== 1
-    );
+    dataLoading.value = true;
+    const statusId = showDeletedMember.value ? '3' : '1,2';
+
+    const response = await getMembers(dataTablePage.value, statusId);
+
+    pagination.value = response.data.pagination;
+
+    desserts.value = response.data.data;
   } catch (error: any) {
     console.error(error.response);
+  } finally {
+    dataLoading.value = false;
   }
 };
 
@@ -83,15 +103,44 @@ const dialogsRestoreDeleteActionData = ref();
 const handleDialogsRestoreDeleteMemberSuccess = async (event: boolean) => {
   if (event) await handleGetMembers();
 };
+
+watch(showDeletedMember, async (newVal, oldVal) => {
+  await handleGetMembers();
+});
 </script>
 
 <template>
   <div>
     <div class="flex items-center justify-between mt-4 mb-2 px-2">
-      <div class="flex-1">
+      <div class="flex-1 flex items-center space-x-4">
         <h1 class="text-3xl">Members</h1>
       </div>
-      <div class="flex-1 flex items-center justify-end">
+      <div class="flex-1 flex items-center justify-end space-x-4">
+        <div
+          :class="!showDeletedMember || 'bg-blue-50 hover:bg-blue-100'"
+          class="flex items-center gap-3 pl-2 pr-3 py-2 rounded bg-gray-50 cursor-pointer group hover:bg-gray-100"
+          @click="showDeletedMember = !showDeletedMember"
+        >
+          <v-icon
+            v-if="showDeletedMember"
+            class="text-blue-500 group-hover:text-blue-600"
+          >
+            mdi-checkbox-marked-outline
+          </v-icon>
+          <v-icon v-else class="text-gray-300 group-hover:text-gray-400">
+            mdi-checkbox-blank-outline
+          </v-icon>
+          <div
+            :class="
+              !showDeletedMember
+                ? 'text-gray-400 group-hover:text-gray-500'
+                : 'text-blue-500 group-hover:text-blue-600'
+            "
+          >
+            Show Deleted Member
+          </div>
+        </div>
+
         <DialogsCreateMember @onSuccess="handleOnSuccess" />
       </div>
     </div>
@@ -100,7 +149,8 @@ const handleDialogsRestoreDeleteMemberSuccess = async (event: boolean) => {
     <v-data-table
       :headers="headers"
       :items="desserts"
-      :items-per-page="5"
+      :items-per-page="pagination.per_page"
+      :loading="dataLoading"
       hide-default-footer
       item-value="user_id"
       class="border-b"
@@ -138,7 +188,7 @@ const handleDialogsRestoreDeleteMemberSuccess = async (event: boolean) => {
           <td>{{ item.email }}</td>
 
           <td>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 w-fit">
               <v-icon
                 v-if="item.roles[0].role_id === 1"
                 class="text-purple-500"
@@ -160,7 +210,7 @@ const handleDialogsRestoreDeleteMemberSuccess = async (event: boolean) => {
             <div
               :class="
                 item.status.id === 1
-                  ? 'bg-green-50 text-green-500'
+                  ? 'bg-green-100 text-green-600 font-medium'
                   : item.status.id === 2
                   ? 'bg-gray-50 text-gray-400'
                   : item.status.id === 3
@@ -267,6 +317,11 @@ const handleDialogsRestoreDeleteMemberSuccess = async (event: boolean) => {
         </tr>
       </template>
     </v-data-table>
+
+    <DataTablePagination
+      :pagination="pagination"
+      :onPageChange="handlePageChange"
+    />
 
     <DialogsChangeRoleMember
       v-model:isDialog="dialogsChangeRoleMember"
