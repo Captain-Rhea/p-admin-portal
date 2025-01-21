@@ -45,8 +45,8 @@ const handleCreateMember = async () => {
       isDialogActive.value = false;
       isLoading.value = false;
     } catch (error: any) {
-      console.log(error.response);
       snackbar.value = true;
+      isLoading.value = false;
     }
   }
 };
@@ -86,7 +86,7 @@ watch(isDialogActive, async (newValue, oldValue) => {
             <v-text-field
               v-model="email"
               :rules="[
-                (v) => !!v || 'Password is required!',
+                (v) => !!v || 'Email is required!',
                 (v) =>
                   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
                   'Invalid email format!',

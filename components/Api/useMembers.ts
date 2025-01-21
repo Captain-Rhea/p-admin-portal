@@ -16,9 +16,15 @@ export const useMembers = () => {
     }
   };
 
-  const getMemberInvite = async () => {
+  const getMemberInvite = async (page = '1', statusId = '4,5') => {
     try {
-      const response = await $mainApi.get('/v1/member/invite');
+      const response = await $mainApi.get('/v1/member/invite', {
+        params: {
+          page: page,
+          per_page: '5',
+          status_id: statusId,
+        },
+      });
       return response.data;
     } catch (error) {
       throw error;
@@ -31,6 +37,17 @@ export const useMembers = () => {
         recipient_email: recipientEmail,
         role_id: roleId,
       });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const rejectMemberInvite = async (userId: number) => {
+    try {
+      const response = await $mainApi.put(
+        `/v1/member/invite/reject/${userId.toString()}`
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -192,5 +209,6 @@ export const useMembers = () => {
     restoreMember,
     permanentlyDeleteMember,
     changeRoleMember,
+    rejectMemberInvite,
   };
 };

@@ -5,7 +5,7 @@ useHead({
 </script>
 
 <template>
-  <div class="space-y-16">
+  <div class="space-y-12">
     <DataTableMemberList />
     <DataTableInviteMemberList />
   </div>

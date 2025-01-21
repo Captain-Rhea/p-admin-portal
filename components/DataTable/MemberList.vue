@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
 import { useMembers } from '~/components/Api/useMembers';
 
 const { getMembers } = useMembers();
