@@ -37,7 +37,11 @@ const handleGetMembers = async () => {
     dataLoading.value = true;
     const statusId = showDeletedMember.value ? '3' : '1,2';
 
-    const response = await getMembers(dataTablePage.value, statusId);
+    const response = await getMembers(
+      dataTablePage.value,
+      statusId,
+      searchInput.value
+    );
 
     pagination.value = response.data.pagination;
 
@@ -106,15 +110,52 @@ const handleDialogsRestoreDeleteMemberSuccess = async (event: boolean) => {
 watch(showDeletedMember, async (newVal, oldVal) => {
   await handleGetMembers();
 });
+
+const searchInput = ref('');
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+const onSearchInput = async () => {
+  if (debounceTimer) clearTimeout(debounceTimer);
+  if (searchInput.value === '') {
+    await handleGetMembers();
+  } else {
+    debounceTimer = setTimeout(async () => {
+      await handleGetMembers();
+    }, 1500);
+  }
+};
 </script>
 
 <template>
   <div>
+    <div class="px-2">
+      <h1 class="text-3xl">Members</h1>
+    </div>
     <div class="flex items-center justify-between mt-4 mb-2 px-2">
       <div class="flex-1 flex items-center space-x-4">
-        <h1 class="text-3xl">Members</h1>
+        <v-text-field
+          v-model="searchInput"
+          append-inner-icon="mdi-magnify"
+          density="compact"
+          placeholder="Search by email"
+          variant="outlined"
+          class="max-w-[350px]"
+          color="primary"
+          hide-details
+          single-line
+          @input="onSearchInput"
+        />
       </div>
       <div class="flex-1 flex items-center justify-end space-x-4">
+        <v-btn
+          v-tooltip:top="'Refresh'"
+          size="small"
+          variant="text"
+          icon
+          @click="handleGetMembers()"
+        >
+          <v-icon class="text-gray-500">mdi-refresh</v-icon>
+        </v-btn>
+
         <div
           :class="!showDeletedMember || 'bg-blue-50 hover:bg-blue-100'"
           class="flex items-center gap-3 pl-2 pr-3 py-2 rounded bg-gray-50 cursor-pointer group hover:bg-gray-100"

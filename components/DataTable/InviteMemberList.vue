@@ -47,12 +47,13 @@ const handlePageChange = async (page: number) => {
 const handleGetMembersInvite = async () => {
   try {
     dataLoading.value = true;
-
-    const response = await getMemberInvite(dataTablePage.value);
-
+    const statusId = '4,5';
+    const response = await getMemberInvite(
+      dataTablePage.value,
+      statusId,
+      searchInput.value
+    );
     pagination.value = response.data.pagination;
-    console.log(response.data.data);
-
     desserts.value = response.data.data;
   } catch (error: any) {
     console.error(error.response);
@@ -72,11 +73,15 @@ const handleOnSuccess = async (event: boolean) => {
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
+    snackbarCopyText.value = 'Copied to clipboard!';
+    snackbarCopy.value = true;
   } catch (err) {
     console.error('Failed to copy: ', err);
   }
 };
+
+const snackbarCopy = ref<boolean>(false);
+const snackbarCopyText = ref<string>('Copied to clipboard');
 
 // Resend Invite Member
 const dialogsResendInviteMember = ref<boolean>(false);
@@ -91,15 +96,51 @@ const dialogsRejectInviteMemberActionData = ref();
 const handleDialogsRejectInviteMemberSuccess = async (event: boolean) => {
   if (event) await handleGetMembersInvite();
 };
+
+const searchInput = ref('');
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+const onSearchInput = async () => {
+  if (debounceTimer) clearTimeout(debounceTimer);
+  if (searchInput.value === '') {
+    await handleGetMembersInvite();
+  } else {
+    debounceTimer = setTimeout(async () => {
+      await handleGetMembersInvite();
+    }, 1500);
+  }
+};
 </script>
 
 <template>
   <div>
+    <div class="px-2">
+      <h1 class="text-3xl">Invite Members</h1>
+    </div>
     <div class="flex items-center justify-between mt-4 mb-2 px-2">
       <div class="flex-1 flex items-center space-x-4">
-        <h1 class="text-3xl">Invite Members</h1>
+        <v-text-field
+          v-model="searchInput"
+          append-inner-icon="mdi-magnify"
+          density="compact"
+          placeholder="Search by email"
+          variant="outlined"
+          class="max-w-[350px]"
+          color="primary"
+          hide-details
+          single-line
+          @input="onSearchInput"
+        />
       </div>
       <div class="flex-1 flex items-center justify-end space-x-4">
+        <v-btn
+          v-tooltip:top="'Refresh'"
+          size="small"
+          variant="text"
+          icon
+          @click="handleGetMembersInvite()"
+        >
+          <v-icon class="text-gray-500">mdi-refresh</v-icon>
+        </v-btn>
         <DialogsInviteMember @onSuccess="handleOnSuccess" />
       </div>
     </div>
@@ -252,5 +293,18 @@ const handleDialogsRejectInviteMemberSuccess = async (event: boolean) => {
       :actionData="dialogsRejectInviteMemberActionData"
       @onSuccess="handleDialogsRejectInviteMemberSuccess"
     />
+
+    <v-snackbar
+      v-model="snackbarCopy"
+      color="white"
+      location="top"
+      class="mt-4"
+      width="100"
+    >
+      <div class="flex items-center justify-center gap-4">
+        <span>{{ snackbarCopyText }}</span>
+        <v-icon class="text-green-500">mdi-check-circle-outline</v-icon>
+      </div>
+    </v-snackbar>
   </div>
 </template>

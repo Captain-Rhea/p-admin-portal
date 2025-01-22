@@ -1,13 +1,14 @@
 export const useMembers = () => {
   const { $mainApi }: any = useNuxtApp();
 
-  const getMembers = async (page = '1', statusId = '1,2') => {
+  const getMembers = async (page = '1', statusId = '1,2', search = '') => {
     try {
       const response = await $mainApi.get('/v1/member', {
         params: {
           page: page,
           per_page: '5',
           status_id: statusId,
+          email: search,
         },
       });
       return response.data;
@@ -16,13 +17,14 @@ export const useMembers = () => {
     }
   };
 
-  const getMemberInvite = async (page = '1', statusId = '4,5') => {
+  const getMemberInvite = async (page = '1', statusId = '4,5', search = '') => {
     try {
       const response = await $mainApi.get('/v1/member/invite', {
         params: {
           page: page,
           per_page: '5',
           status_id: statusId,
+          recipient_email: search,
         },
       });
       return response.data;
