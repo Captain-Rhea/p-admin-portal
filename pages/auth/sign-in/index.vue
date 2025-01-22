@@ -27,16 +27,21 @@ const password = ref<string>('');
 const visible = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const snackbar = ref<boolean>(false);
+const snackbarMessage = ref<string>(
+  'Invalid username or password. Please try again.'
+);
 
 const handleLogin = async () => {
   const isValid = await loginForm.value.validate();
   if (isValid.valid) {
+    snackbar.value = false;
     try {
       isLoading.value = true;
       await login(email.value, password.value);
       appStore.enableApp();
       navigateTo('/');
-    } catch (error) {
+    } catch (error: any) {
+      snackbarMessage.value = error.response.data.message;
       isLoading.value = false;
       snackbar.value = true;
     }
@@ -152,10 +157,11 @@ const handleLogin = async () => {
       v-model="snackbar"
       color="#ffffff"
       location="bottom right"
+      max-width="400"
       vertical
     >
       <div class="pb-2 text-red-500 text-lg font-semibold">Login Failed</div>
-      <p>Invalid username or password. Please try again.</p>
+      <p>{{ snackbarMessage }}</p>
       <template v-slot:actions>
         <v-btn variant="tonal" color="error" @click="snackbar = false">
           <div class="capitalize">Close</div>

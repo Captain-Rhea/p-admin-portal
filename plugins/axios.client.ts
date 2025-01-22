@@ -4,6 +4,7 @@ import { useAuth } from '~/components/Api/useAuth';
 export default defineNuxtPlugin((nuxtApp) => {
   const appStore = useAppStore();
   const runtimeConfig = useRuntimeConfig();
+  const route = useRoute();
 
   const mainApi = axios.create({
     baseURL: runtimeConfig.public.mainApi,
@@ -26,14 +27,16 @@ export default defineNuxtPlugin((nuxtApp) => {
       },
       async (error: any) => {
         // กรณี 401: Unauthorized
-        const { forceLogout } = useAuth();
         if (error.response?.status === 401) {
-          try {
-            await forceLogout();
-            return navigateTo('/auth/sign-in');
-          } catch (error) {
-            appStore.disableApp();
-            appStore.enableServerError();
+          if (route.path !== '/auth/sign-in') {
+            return navigateTo('/auth/warning');
+          }
+        }
+
+        // กรณี 401: Unauthorized
+        if (error.response?.status === 403) {
+          if (route.path !== '/auth/sign-in') {
+            return navigateTo('/auth/warning');
           }
         }
 
