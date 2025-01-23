@@ -25,7 +25,7 @@ onMounted(async () => {
 <template>
   <div class="fixed w-full h-screen bg-slate-900 flex py-2 pr-2">
     <LayoutsSidebar />
-    <div class="w-full flex flex-col gap-4 flex-1 rounded-lg py-4 bg-white">
+    <div class="w-full flex flex-col gap-4 flex-1 rounded-lg pb-4 bg-white">
       <LayoutsToolsbar />
       <div class="w-full flex-1 overflow-auto px-4">
         <slot />

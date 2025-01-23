@@ -1,5 +1,6 @@
 export const useAuth = () => {
   const { $mainApi }: any = useNuxtApp();
+  const appStore = useAppStore();
 
   const login = async (email: string, password: string) => {
     try {
@@ -7,6 +8,7 @@ export const useAuth = () => {
         email,
         password,
       });
+      appStore.enableIsLogin();
       return response.data;
     } catch (error) {
       throw error;
@@ -16,6 +18,7 @@ export const useAuth = () => {
   const isLogin = async () => {
     try {
       const response = await $mainApi.get('/v1/auth/is-login');
+      appStore.enableIsLogin();
       return response.data;
     } catch (error) {
       throw error;

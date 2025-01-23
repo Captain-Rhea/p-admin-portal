@@ -5,6 +5,7 @@ export const useAppStore = defineStore('appStore', {
     serverError: false,
     appStatus: false,
     sidebarMiniMode: false,
+    isLogin: false,
   }),
   actions: {
     enableServerError() {
@@ -29,6 +30,14 @@ export const useAppStore = defineStore('appStore', {
 
     disableSidebarMiniMode() {
       this.sidebarMiniMode = false;
+    },
+
+    enableIsLogin() {
+      this.isLogin = true;
+    },
+
+    disableIsLogin() {
+      this.isLogin = false;
     },
   },
 });
