@@ -2,6 +2,7 @@
 import { useMembers } from '~/components/Api/useMembers';
 
 const { getMembers } = useMembers();
+const myprofileStore = useMyprofileStore();
 
 const dataLoading = ref<boolean>(false);
 const showDeletedMember = ref<boolean>(false);
@@ -107,6 +108,10 @@ const handleDialogsRestoreDeleteMemberSuccess = async (event: boolean) => {
   if (event) await handleGetMembers();
 };
 
+// Member Profile
+const dialogsMemberProfile = ref<boolean>(false);
+const dialogsMemberProfileActionData = ref();
+
 watch(showDeletedMember, async (newVal, oldVal) => {
   await handleGetMembers();
 });
@@ -146,17 +151,13 @@ const onSearchInput = async () => {
         />
       </div>
       <div class="flex-1 flex items-center justify-end space-x-4">
-        <v-btn
-          v-tooltip:top="'Refresh'"
-          size="small"
-          variant="text"
-          icon
-          @click="handleGetMembers()"
-        >
+        <v-btn size="small" variant="text" @click="handleGetMembers()">
           <v-icon class="text-gray-500">mdi-refresh</v-icon>
+          <div class="capitalize ml-1">refresh</div>
         </v-btn>
 
         <div
+          v-if="myprofileStore.isCaptain() || myprofileStore.isOwner()"
           :class="!showDeletedMember || 'bg-blue-50 hover:bg-blue-100'"
           class="flex items-center gap-3 pl-2 pr-3 py-2 rounded bg-gray-50 cursor-pointer group hover:bg-gray-100"
           @click="showDeletedMember = !showDeletedMember"
@@ -181,7 +182,9 @@ const onSearchInput = async () => {
           </div>
         </div>
 
-        <DialogsCreateMember @onSuccess="handleOnSuccess" />
+        <div v-if="myprofileStore.isCaptain()">
+          <DialogsCreateMember @onSuccess="handleOnSuccess" />
+        </div>
       </div>
     </div>
 
@@ -264,95 +267,125 @@ const onSearchInput = async () => {
           </td>
 
           <td>
-            <v-menu location="bottom right">
-              <template v-slot:activator="{ props }">
-                <div
-                  v-bind="props"
-                  class="p-1 rounded text-gray-400 w-fit cursor-pointer mx-auto hover:bg-gray-50"
-                >
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </div>
-              </template>
-              <BaseMenuCard>
-                <BaseMenuItem
-                  label="Change Role"
-                  icon="account-star-outline"
-                  @click="
-                    (dialogsChangeRoleMember = true),
-                      (dialogsChangeRoleMemberActionData = {
-                        userId: item.user_id,
-                        oldRole: item.roles[0].role_id,
-                      })
-                  "
-                />
-                <BaseMenuItem
-                  label="Reset Password"
-                  icon="lock-reset"
-                  @click="
-                    (dialogsResetPasswordMember = true),
-                      (dialogsResetPasswordActionData = {
-                        userId: item.user_id,
-                      })
-                  "
-                />
-                <BaseMenuItem
-                  v-if="item.status.id === 1"
-                  label="Suspend"
-                  icon="account-cancel-outline"
-                  @click="
-                    (dialogsSuspendMember = true),
-                      (dialogsSuspendActionData = {
-                        userId: item.user_id,
-                      })
-                  "
-                />
-                <BaseMenuItem
-                  v-if="item.status.id === 2"
-                  label="Active"
-                  icon="account-check-outline"
-                  @click="
-                    (dialogsActivateMember = true),
-                      (dialogsActivateActionData = {
-                        userId: item.user_id,
-                      })
-                  "
-                />
-                <BaseMenuItem
-                  v-if="item.status.id !== 3"
-                  label="Delete"
-                  icon="trash-can-outline"
-                  variant="soft-delete"
-                  @click="
-                    (dialogsSoftDeleteMember = true),
-                      (dialogsSoftDeleteActionData = {
-                        userId: item.user_id,
-                      })
-                  "
-                />
-                <BaseMenuItem
-                  v-if="item.status.id === 3"
-                  label="Restore Member"
-                  icon="account-convert-outline"
-                  @click="
-                    (dialogsRestoreDeleteMember = true),
-                      (dialogsRestoreDeleteActionData = {
-                        userId: item.user_id,
-                      })
-                  "
-                />
-                <BaseMenuItem
-                  label="Permanently Delete"
-                  icon="trash-can-outline"
-                  variant="delete"
-                  @click="
-                    (dialogsPermanentlyDeleteMember = true),
-                      (dialogsPermanentlyDeleteActionData = {
-                        userId: item.user_id,
-                      })
-                  "
-                />
-              </BaseMenuCard>
-            </v-menu>
+            <div
+              v-if="item.roles[0].role_id === 1"
+              class="text-gray-400 text-center"
+            >
+              <v-icon>mdi-lock-outline</v-icon>
+            </div>
+            <div v-else>
+              <div
+                v-if="item.user_id === myprofileStore.user_id"
+                class="text-center text-gray-400"
+              >
+                You
+              </div>
+
+              <v-menu v-else location="bottom right">
+                <template v-slot:activator="{ props }">
+                  <div
+                    v-bind="props"
+                    class="p-1 rounded text-gray-400 w-fit cursor-pointer mx-auto hover:bg-gray-50"
+                  >
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </div>
+                </template>
+                <BaseMenuCard>
+                  <div v-if="myprofileStore.isAdmin()">
+                    <BaseMenuItem
+                      label="View Profile"
+                      icon="badge-account-outline"
+                      @click="
+                        (dialogsMemberProfile = true),
+                          (dialogsMemberProfileActionData = {
+                            userId: item.user_id,
+                          })
+                      "
+                    />
+                  </div>
+                  <div v-else>
+                    <BaseMenuItem
+                      label="Change Role"
+                      icon="account-star-outline"
+                      @click="
+                        (dialogsChangeRoleMember = true),
+                          (dialogsChangeRoleMemberActionData = {
+                            userId: item.user_id,
+                            oldRole: item.roles[0].role_id,
+                          })
+                      "
+                    />
+                    <BaseMenuItem
+                      label="Reset Password"
+                      icon="lock-reset"
+                      @click="
+                        (dialogsResetPasswordMember = true),
+                          (dialogsResetPasswordActionData = {
+                            userId: item.user_id,
+                          })
+                      "
+                    />
+                    <BaseMenuItem
+                      v-if="item.status.id === 1"
+                      label="Suspend"
+                      icon="account-cancel-outline"
+                      @click="
+                        (dialogsSuspendMember = true),
+                          (dialogsSuspendActionData = {
+                            userId: item.user_id,
+                          })
+                      "
+                    />
+                    <BaseMenuItem
+                      v-if="item.status.id === 2"
+                      label="Active"
+                      icon="account-check-outline"
+                      @click="
+                        (dialogsActivateMember = true),
+                          (dialogsActivateActionData = {
+                            userId: item.user_id,
+                          })
+                      "
+                    />
+                    <BaseMenuItem
+                      v-if="item.status.id !== 3"
+                      label="Delete"
+                      icon="trash-can-outline"
+                      variant="soft-delete"
+                      @click="
+                        (dialogsSoftDeleteMember = true),
+                          (dialogsSoftDeleteActionData = {
+                            userId: item.user_id,
+                          })
+                      "
+                    />
+                    <BaseMenuItem
+                      v-if="item.status.id === 3"
+                      label="Restore Member"
+                      icon="account-convert-outline"
+                      @click="
+                        (dialogsRestoreDeleteMember = true),
+                          (dialogsRestoreDeleteActionData = {
+                            userId: item.user_id,
+                          })
+                      "
+                    />
+                    <BaseMenuItem
+                      v-if="item.status.id === 3"
+                      label="Permanently Delete"
+                      icon="trash-can-outline"
+                      variant="delete"
+                      @click="
+                        (dialogsPermanentlyDeleteMember = true),
+                          (dialogsPermanentlyDeleteActionData = {
+                            userId: item.user_id,
+                          })
+                      "
+                    />
+                  </div>
+                </BaseMenuCard>
+              </v-menu>
+            </div>
           </td>
         </tr>
       </template>
@@ -402,6 +435,11 @@ const onSearchInput = async () => {
       v-model:isDialog="dialogsRestoreDeleteMember"
       :actionData="dialogsRestoreDeleteActionData"
       @onSuccess="handleDialogsRestoreDeleteMemberSuccess"
+    />
+
+    <DialogsProfileMember
+      v-model:isDialog="dialogsMemberProfile"
+      :actionData="dialogsMemberProfileActionData"
     />
   </div>
 </template>

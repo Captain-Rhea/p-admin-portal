@@ -132,14 +132,9 @@ const onSearchInput = async () => {
         />
       </div>
       <div class="flex-1 flex items-center justify-end space-x-4">
-        <v-btn
-          v-tooltip:top="'Refresh'"
-          size="small"
-          variant="text"
-          icon
-          @click="handleGetMembersInvite()"
-        >
+        <v-btn size="small" variant="text" @click="handleGetMembersInvite()">
           <v-icon class="text-gray-500">mdi-refresh</v-icon>
+          <div class="capitalize ml-1">refresh</div>
         </v-btn>
         <DialogsInviteMember @onSuccess="handleOnSuccess" />
       </div>

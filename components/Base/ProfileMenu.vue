@@ -1,24 +1,41 @@
 <script setup>
-const { locale, locales } = useI18n();
+const { locale } = useI18n();
 const myprofileStore = useMyprofileStore();
-
 const dialogsSignOut = ref(false);
 </script>
 
 <template>
   <div>
-    <v-menu location="bottom right">
+    <v-menu location="bottom right" class="cursor-default">
       <template v-slot:activator="{ props }">
         <div v-bind="props">
-          <v-avatar>
-            <v-img alt="John" src="https://cdn.vuetifyjs.com/images/john.jpg" />
+          <v-avatar color="primary" class="cursor-pointer">
+            <v-img
+              v-if="myprofileStore.user_info.avatar_id"
+              :src="myprofileStore.user_info.avatar_base_url"
+              :lazy-src="myprofileStore.user_info.avatar_lazy_url"
+            />
+            <span v-else class="font-bold text-xl text-white">
+              {{
+                myprofileStore.user_info_translation[0]?.first_name[0] || 'U'
+              }}
+            </span>
           </v-avatar>
         </div>
       </template>
       <BaseMenuCard>
         <div class="flex gap-2 border-b pb-2 w-full">
-          <v-avatar>
-            <v-img alt="John" src="https://cdn.vuetifyjs.com/images/john.jpg" />
+          <v-avatar color="primary">
+            <v-img
+              v-if="myprofileStore.user_info.avatar_id"
+              :src="myprofileStore.user_info.avatar_base_url"
+              :lazy-src="myprofileStore.user_info.avatar_lazy_url"
+            />
+            <span v-else class="font-bold text-xl text-white">
+              {{
+                myprofileStore?.user_info_translation[0]?.first_name[0] || 'U'
+              }}
+            </span>
           </v-avatar>
           <div
             v-for="(item, index) in myprofileStore.user_info_translation"

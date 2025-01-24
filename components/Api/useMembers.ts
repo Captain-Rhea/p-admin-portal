@@ -198,6 +198,21 @@ export const useMembers = () => {
     }
   };
 
+  const getMemberProfile = async (userId: string) => {
+    try {
+      const response = await $mainApi.get('/v1/member', {
+        params: {
+          page: 1,
+          per_page: '1',
+          user_id: userId || '0',
+        },
+      });
+      return response.data.data.data[0];
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     getMembers,
     getMemberInvite,
@@ -212,5 +227,6 @@ export const useMembers = () => {
     permanentlyDeleteMember,
     changeRoleMember,
     rejectMemberInvite,
+    getMemberProfile,
   };
 };

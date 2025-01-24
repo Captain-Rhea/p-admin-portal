@@ -1,19 +1,26 @@
+<!-- <DialogsChangeRoleMember/> -->
 <script setup lang="ts">
-import { useAuth } from '~/components/Api/useAuth';
-const { resetProfile } = useMyprofileStore();
+import { useMembers } from '~/components/Api/useMembers';
+
+interface PropsData {
+  userId: number;
+}
 
 const props = defineProps({
   isDialog: {
     type: Boolean,
     default: false,
   },
+  actionData: {
+    type: Object as PropType<PropsData>,
+    default: null,
+  },
 });
 
-const { isDialog } = toRefs(props);
-const emit = defineEmits(['update:isDialog']);
-const appStore = useAppStore();
+const { getMemberProfile } = useMembers();
 
-const { logout } = useAuth();
+const { isDialog } = toRefs(props);
+const emit = defineEmits(['update:isDialog', 'onSuccess']);
 
 const isLoading = ref(false);
 
@@ -23,23 +30,12 @@ const snackbar = ref({
   color: 'error',
 });
 
-const handleConfirmAction = async () => {
-  try {
-    isLoading.value = true;
-    await logout();
-    appStore.disableIsLogin();
-    resetProfile();
-    navigateTo('/auth/sign-in');
-  } catch (error) {
-    snackbar.value = {
-      show: true,
-      message: 'Failed to sign out. Please try again.',
-      color: 'error',
-    };
-  } finally {
-    isLoading.value = false;
+watch(isDialog, async (newValue) => {
+  if (newValue) {
+    const response = await getMemberProfile(props.actionData.userId.toString());
+    console.log(response);
   }
-};
+});
 </script>
 
 <template>
@@ -50,11 +46,16 @@ const handleConfirmAction = async () => {
     @click:outside="!isLoading && emit('update:isDialog', false)"
   >
     <BaseDialogCard>
-      <BaseDialogTitle>Confirm Sign Out</BaseDialogTitle>
+      <BaseDialogTitle>Profile</BaseDialogTitle>
       <BaseDialogDescription>
-        Are you sure you want to sign out? You will need to log in again to
-        access your account.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, ab!
       </BaseDialogDescription>
+      <BaseDialogBody>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus
+        facere quos aspernatur ad atque, eius corrupti numquam, aut architecto
+        doloribus, error officia soluta exercitationem. Consequatur at amet
+        eveniet reprehenderit explicabo?
+      </BaseDialogBody>
       <BaseDialogActions>
         <v-btn
           :disabled="isLoading"
@@ -63,13 +64,8 @@ const handleConfirmAction = async () => {
         >
           <div class="capitalize">Close</div>
         </v-btn>
-        <v-btn
-          :loading="isLoading"
-          color="error"
-          flat
-          @click="handleConfirmAction"
-        >
-          <div class="capitalize">Sign Out</div>
+        <v-btn :loading="isLoading" color="primary" flat>
+          <div class="capitalize">Confirm</div>
         </v-btn>
       </BaseDialogActions>
     </BaseDialogCard>

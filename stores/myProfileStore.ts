@@ -68,17 +68,14 @@ export const useMyprofileStore = defineStore('myProfileStore', {
   }),
 
   actions: {
-    // โหลด Profile จาก API
     async fetchProfile(profileData: MyProfile) {
       this.$patch(profileData);
     },
 
-    // อัปเดต Email
     updateEmail(newEmail: string) {
       this.email = newEmail;
     },
 
-    // อัปเดต Avatar
     updateAvatar(
       avatarBaseUrl: string,
       avatarId: number,
@@ -89,19 +86,28 @@ export const useMyprofileStore = defineStore('myProfileStore', {
       this.user_info.avatar_lazy_url = avatarLazyUrl;
     },
 
-    // เพิ่ม Permission
     addPermission(permission: Permissions) {
       this.permissions.push(permission);
     },
 
-    // เพิ่ม Role
     addRole(role: Roles) {
       this.roles.push(role);
     },
 
-    // รีเซ็ตข้อมูล Profile
     resetProfile() {
       this.$reset();
+    },
+
+    isCaptain() {
+      return this.roles.some((role) => role.role_id === 1);
+    },
+
+    isOwner() {
+      return this.roles.some((role) => role.role_id === 2);
+    },
+
+    isAdmin() {
+      return this.roles.some((role) => role.role_id === 3);
     },
   },
 });

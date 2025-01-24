@@ -2,11 +2,13 @@
 useHead({
   titleTemplate: 'Members - %s',
 });
+
+const myprofileStore = useMyprofileStore();
 </script>
 
 <template>
   <div class="space-y-12">
     <DataTableMemberList />
-    <DataTableInviteMemberList />
+    <DataTableInviteMemberList v-if="!myprofileStore.isAdmin()" />
   </div>
 </template>
