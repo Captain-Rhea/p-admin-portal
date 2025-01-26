@@ -305,6 +305,16 @@ const onSearchInput = async () => {
                   </div>
                   <div v-else>
                     <BaseMenuItem
+                      label="View Profile"
+                      icon="badge-account-outline"
+                      @click="
+                        (dialogsMemberProfile = true),
+                          (dialogsMemberProfileActionData = {
+                            userId: item.user_id,
+                          })
+                      "
+                    />
+                    <BaseMenuItem
                       label="Change Role"
                       icon="account-star-outline"
                       @click="

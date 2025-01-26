@@ -1,5 +1,6 @@
 <!-- <DialogsChangeRoleMember/> -->
 <script setup lang="ts">
+import moment from 'moment';
 import { useMembers } from '~/components/Api/useMembers';
 
 interface PropsData {
@@ -17,12 +18,24 @@ const props = defineProps({
   },
 });
 
+const formatDate = (dateTime: string) => {
+  return moment(dateTime).format('DD-MM-YYYY');
+};
+
+const thaiPhoneFormat = (phone: string): string => {
+  if (phone.length === 10 && /^[0-9]+$/.test(phone)) {
+    return `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6)}`;
+  }
+  return phone;
+};
+
 const { getMemberProfile } = useMembers();
 
 const { isDialog } = toRefs(props);
 const emit = defineEmits(['update:isDialog', 'onSuccess']);
 
 const isLoading = ref(false);
+const memberData = ref();
 
 const snackbar = ref({
   show: false,
@@ -32,8 +45,23 @@ const snackbar = ref({
 
 watch(isDialog, async (newValue) => {
   if (newValue) {
-    const response = await getMemberProfile(props.actionData.userId.toString());
-    console.log(response);
+    try {
+      isLoading.value = true;
+      const response = await getMemberProfile(
+        props.actionData.userId.toString()
+      );
+      memberData.value = response;
+    } catch (error) {
+      emit('update:isDialog', false);
+      snackbar.value = {
+        show: true,
+        message:
+          'Unable to retrieve member profile. Please check your connection and try again.',
+        color: 'error',
+      };
+    } finally {
+      isLoading.value = false;
+    }
   }
 });
 </script>
@@ -42,32 +70,95 @@ watch(isDialog, async (newValue) => {
   <v-dialog
     v-model="isDialog"
     :persistent="isLoading"
-    max-width="400"
+    max-width="500"
     @click:outside="!isLoading && emit('update:isDialog', false)"
   >
     <BaseDialogCard>
-      <BaseDialogTitle>Profile</BaseDialogTitle>
-      <BaseDialogDescription>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, ab!
-      </BaseDialogDescription>
       <BaseDialogBody>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus
-        facere quos aspernatur ad atque, eius corrupti numquam, aut architecto
-        doloribus, error officia soluta exercitationem. Consequatur at amet
-        eveniet reprehenderit explicabo?
-      </BaseDialogBody>
-      <BaseDialogActions>
-        <v-btn
-          :disabled="isLoading"
-          variant="tonal"
-          @click="emit('update:isDialog', false)"
+        <div class="w-full relative">
+          <div
+            class="absolute right-[-8px]"
+            @click="emit('update:isDialog', false)"
+          >
+            <v-icon>mdi-close</v-icon>
+          </div>
+        </div>
+
+        <div
+          v-if="isLoading"
+          class="flex inset-0 items-center justify-center h-[100px]"
         >
-          <div class="capitalize">Close</div>
-        </v-btn>
-        <v-btn :loading="isLoading" color="primary" flat>
-          <div class="capitalize">Confirm</div>
-        </v-btn>
-      </BaseDialogActions>
+          loading...
+        </div>
+        <div v-else class="grid grid-cols-12">
+          <div class="col-span-4 py-4">
+            <div class="rounded-md overflow-hidden w-fit h-fit mt-2">
+              <v-avatar
+                rounded="0"
+                size="120"
+                color="primary"
+                class="cursor-pointer"
+              >
+                <v-img
+                  v-if="memberData.user_info.avatar_id"
+                  :src="memberData.user_info.avatar_base_url"
+                  :lazy-src="memberData.user_info.avatar_lazy_url"
+                />
+                <div
+                  v-else
+                  class="font-medium text-white text-8xl mt-3 uppercase"
+                >
+                  {{ memberData.user_info_translation[0].first_name[0] || 'U' }}
+                </div>
+              </v-avatar>
+            </div>
+          </div>
+          <div class="col-span-8">
+            <div class="flex mt-6">
+              <div class="min-w-[90px] font-medium">Username:</div>
+              <div class="w-full truncate">
+                {{ memberData.email }}
+              </div>
+            </div>
+
+            <div class="flex">
+              <div class="min-w-[90px] font-medium">Role:</div>
+              <div class="w-full truncate capitalize">
+                {{ memberData.roles[0].name }}
+              </div>
+            </div>
+
+            <div class="flex mt-4">
+              <div class="min-w-[90px] font-medium">Full Name:</div>
+              <div class="w-full truncate capitalize">
+                {{ memberData.user_info_translation[0].first_name }}
+                {{ memberData.user_info_translation[0].last_name }}
+              </div>
+            </div>
+
+            <div class="flex">
+              <div class="min-w-[90px] font-medium">Nickname:</div>
+              <div class="w-full truncate capitalize">
+                {{ memberData.user_info_translation[0].nickname }}
+              </div>
+            </div>
+
+            <div class="flex">
+              <div class="min-w-[90px] font-medium">Mobile:</div>
+              <div class="w-full truncate capitalize">
+                {{ thaiPhoneFormat(memberData.user_info.phone) }}
+              </div>
+            </div>
+
+            <div class="flex">
+              <div class="min-w-[90px] font-medium">Register At:</div>
+              <div class="w-full truncate capitalize">
+                {{ formatDate(memberData.created_at) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </BaseDialogBody>
     </BaseDialogCard>
   </v-dialog>
 
