@@ -1,27 +1,11 @@
 <script setup lang="ts">
-import { useAuth } from '~/components/Api/useAuth';
-
 useHead({
   titleTemplate: 'My Profile - %s',
 });
 
 const { locale } = useI18n();
-const { getLoginTransaction } = useAuth();
 
 const myprofileStore: any = useMyprofileStore();
-
-watchEffect(async () => {
-  if (myprofileStore.user_id) {
-    try {
-      const loginTransaction = await getLoginTransaction(
-        myprofileStore.user_id
-      );
-      console.log(loginTransaction);
-    } catch (error: any) {
-      console.log(error.response || error.message);
-    }
-  }
-});
 
 const thaiPhoneFormat = (phone: string) => {
   if (phone.length === 10 && /^[0-9]+$/.test(phone)) {
@@ -36,9 +20,10 @@ const thaiPhoneFormat = (phone: string) => {
     <div class="mb-4">
       <h1 class="text-3xl">My Profile</h1>
     </div>
+
     <div class="grid grid-cols-12 gap-4">
-      <div class="col-span-4">
-        <div class="px-4 py-6 rounded-md bg-white border">
+      <div class="col-span-4 h-full">
+        <div class="px-4 py-6 rounded-md bg-white border h-full">
           <div class="relative w-fit mx-auto cursor-default">
             <v-avatar size="200" color="primary">
               <v-img
@@ -89,7 +74,8 @@ const thaiPhoneFormat = (phone: string) => {
           </div>
         </div>
       </div>
-      <div class="col-span-8">
+
+      <div class="col-span-8 h-full">
         <div class="p-4 rounded-md border">
           <DataTableLoginTransaction />
         </div>

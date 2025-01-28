@@ -97,12 +97,12 @@ export const useAuth = () => {
     }
   };
 
-  const getLoginTransaction = async (userId: string) => {
+  const getLoginTransaction = async (userId: string, page: string) => {
     try {
       const response = await $mainApi.get('/v1/auth/transaction/login', {
         params: {
-          page: 1,
-          per_page: '10',
+          page: page,
+          per_page: '7',
           user_id: userId || '',
         },
       });
