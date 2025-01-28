@@ -97,6 +97,21 @@ export const useAuth = () => {
     }
   };
 
+  const getLoginTransaction = async (userId: string) => {
+    try {
+      const response = await $mainApi.get('/v1/auth/transaction/login', {
+        params: {
+          page: 1,
+          per_page: '10',
+          user_id: userId || '',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     login,
     isLogin,
@@ -106,5 +121,6 @@ export const useAuth = () => {
     forgotPasswordVerifyKey,
     forgotPasswordReset,
     resetPassword,
+    getLoginTransaction,
   };
 };

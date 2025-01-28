@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useAuth } from '~/components/Api/useAuth';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const appStore = useAppStore();

@@ -9,7 +9,7 @@ interface MyProfile {
     avatar_lazy_url: string | null;
     phone: string;
   };
-  user_info_translation: UserInfoTranslation;
+  user_info_translation: UserInfoTranslation[];
   email: string;
   permissions: Permissions[];
   roles: Roles[];
@@ -50,13 +50,7 @@ export const useMyprofileStore = defineStore('myProfileStore', {
       avatar_lazy_url: null,
       phone: '',
     },
-    user_info_translation: {
-      first_name: '',
-      language_code: '',
-      last_name: '',
-      nickname: '',
-      updated_at: '',
-    },
+    user_info_translation: [],
     email: '',
     permissions: [],
     roles: [],
@@ -72,26 +66,27 @@ export const useMyprofileStore = defineStore('myProfileStore', {
       this.$patch(profileData);
     },
 
-    updateEmail(newEmail: string) {
-      this.email = newEmail;
-    },
-
-    updateAvatar(
-      avatarBaseUrl: string,
-      avatarId: number,
-      avatarLazyUrl: string
-    ) {
+    updateAvatar(avatarBaseUrl: string, avatarLazyUrl: string) {
       this.user_info.avatar_base_url = avatarBaseUrl;
-      this.user_info.avatar_id = avatarId;
       this.user_info.avatar_lazy_url = avatarLazyUrl;
     },
 
-    addPermission(permission: Permissions) {
-      this.permissions.push(permission);
-    },
-
-    addRole(role: Roles) {
-      this.roles.push(role);
+    updateProfile(
+      phone: string,
+      firstNameTh: string,
+      lastNameTh: string,
+      nicknameTh: string,
+      firstNameEn: string,
+      lastNameEn: string,
+      nicknameEn: string
+    ) {
+      this.user_info.phone = phone;
+      this.user_info_translation[0].first_name = firstNameTh;
+      this.user_info_translation[0].last_name = lastNameTh;
+      this.user_info_translation[0].nickname = nicknameTh;
+      this.user_info_translation[1].first_name = firstNameEn;
+      this.user_info_translation[1].last_name = lastNameEn;
+      this.user_info_translation[1].nickname = nicknameEn;
     },
 
     resetProfile() {
