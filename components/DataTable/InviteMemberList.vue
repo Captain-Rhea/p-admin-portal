@@ -195,8 +195,8 @@ const onSearchInput = async () => {
           </td>
 
           <td>
-            <div class="flex items-center gap-1">
-              <span>{{ formatDate(item.created_at) }}</span>
+            <div class="flex items-center gap-1 min-w-[100px]">
+              <div>{{ formatDate(item.created_at) }}</div>
               <v-icon
                 v-tooltip:top="formatTime(item.created_at)"
                 class="text-gray-400"
@@ -210,9 +210,9 @@ const onSearchInput = async () => {
           <td>
             <div
               :class="!isExpired(item.expires_at) || 'text-red-500'"
-              class="flex items-center gap-1"
+              class="flex items-center gap-1 min-w-[100px]"
             >
-              <span>{{ formatDate(item.expires_at) }}</span>
+              <div>{{ formatDate(item.expires_at) }}</div>
               <v-icon
                 v-if="!isExpired(item.expires_at)"
                 v-tooltip:top="formatTime(item.expires_at)"
