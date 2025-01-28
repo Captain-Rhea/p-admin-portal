@@ -24,12 +24,8 @@ export const useAppStore = defineStore('appStore', {
       this.appStatus = false;
     },
 
-    enableSidebarMiniMode() {
-      this.sidebarMiniMode = true;
-    },
-
-    disableSidebarMiniMode() {
-      this.sidebarMiniMode = false;
+    toggleSidebarMiniMode() {
+      this.sidebarMiniMode = !this.sidebarMiniMode;
     },
 
     enableIsLogin() {

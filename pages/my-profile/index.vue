@@ -33,11 +33,10 @@ const thaiPhoneFormat = (phone: string) => {
               />
               <div
                 v-else
-                class="font-medium text-white text-8xl mt-3 uppercase"
+                class="font-medium text-white text-7xl mt-3 uppercase"
               >
-                {{
-                  myprofileStore.user_info_translation[0]?.first_name[0] || 'U'
-                }}
+                {{ myprofileStore.user_info_translation[1]?.first_name[0] }}
+                {{ myprofileStore.user_info_translation[1]?.last_name[0] }}
               </div>
             </v-avatar>
             <DialogsUpdateAvatar />

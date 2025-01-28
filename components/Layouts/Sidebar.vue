@@ -3,13 +3,10 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAppStore } from '~/stores/appStore';
 
-// ใช้ Pinia Store
 const appStore = useAppStore();
 
-// คำนวณค่า sidebarMiniMode
 const sidebarMiniMode = computed(() => appStore.sidebarMiniMode);
 
-// เมนูรายการ
 const menuList = [
   {
     type: 'caption',
@@ -81,10 +78,8 @@ const menuList = [
   },
 ];
 
-// จัดการ State ของ Submenu
 const expandedMenus = ref<string[]>([]);
 
-// ฟังก์ชันเปิด/ปิด Submenu
 const toggleSubmenu = (menuName: string) => {
   if (expandedMenus.value.includes(menuName)) {
     expandedMenus.value = expandedMenus.value.filter(
@@ -95,11 +90,9 @@ const toggleSubmenu = (menuName: string) => {
   }
 };
 
-// ตรวจสอบว่า Submenu เปิดอยู่หรือไม่
 const isMenuExpanded = (menuName: string) =>
   expandedMenus.value.includes(menuName);
 
-// ใช้ route เพื่อตรวจสอบ path
 const route = useRoute();
 
 const isActive = (path: any, submenu: Array<any> | undefined = []) => {
@@ -132,7 +125,9 @@ watch(
         v-if="!sidebarMiniMode"
         class="w-[180px] mx-auto"
       />
-      <LogoComponentSymbol v-else />
+      <div v-else class="w-[48px] h-[48px]">
+        <LogoComponentSymbol />
+      </div>
     </div>
 
     <!-- Menu List -->

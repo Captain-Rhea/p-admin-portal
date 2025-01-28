@@ -34,9 +34,15 @@ const getMyProfile = async () => {
 
 <template>
   <div class="w-full border-b flex items-center justify-between h-[60px] px-4">
-    <div>
-      <v-icon>mdi-menu-open</v-icon>
-    </div>
+    <v-btn
+      size="small"
+      variant="text"
+      icon
+      @click="appStore.toggleSidebarMiniMode()"
+    >
+      <v-icon v-if="appStore.sidebarMiniMode">mdi-menu-close</v-icon>
+      <v-icon v-else>mdi-menu-open</v-icon>
+    </v-btn>
 
     <div class="flex items-center gap-4">
       <BaseFullScreenAction />

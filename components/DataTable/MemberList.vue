@@ -208,8 +208,9 @@ const onSearchInput = async () => {
                   :src="item.user_info.avatar_base_url"
                   :lazy-src="item.user_info.avatar_lazy_url"
                 />
-                <span v-else class="text-2xl">
-                  {{ item.user_info_translation[0].nickname[0] }}
+                <span v-else class="font-medium">
+                  {{ item.user_info_translation[1].first_name[0] }}
+                  {{ item.user_info_translation[1].last_name[0] }}
                 </span>
               </v-avatar>
 

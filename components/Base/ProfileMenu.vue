@@ -15,10 +15,9 @@ const dialogsSignOut = ref(false);
               :src="myprofileStore.user_info.avatar_base_url"
               :lazy-src="myprofileStore.user_info.avatar_lazy_url"
             />
-            <span v-else class="font-bold text-xl text-white">
-              {{
-                myprofileStore.user_info_translation[0]?.first_name[0] || 'U'
-              }}
+            <span v-else class="font-medium text-white">
+              {{ myprofileStore.user_info_translation[1]?.first_name[0] }}
+              {{ myprofileStore.user_info_translation[1]?.last_name[0] }}
             </span>
           </v-avatar>
         </div>
@@ -31,10 +30,9 @@ const dialogsSignOut = ref(false);
               :src="myprofileStore.user_info.avatar_base_url"
               :lazy-src="myprofileStore.user_info.avatar_lazy_url"
             />
-            <span v-else class="font-bold text-xl text-white">
-              {{
-                myprofileStore?.user_info_translation[0]?.first_name[0] || 'U'
-              }}
+            <span v-else class="font-medium text-white">
+              {{ myprofileStore.user_info_translation[1]?.first_name[0] }}
+              {{ myprofileStore.user_info_translation[1]?.last_name[0] }}
             </span>
           </v-avatar>
           <div
