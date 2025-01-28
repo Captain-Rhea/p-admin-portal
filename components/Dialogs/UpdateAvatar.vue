@@ -118,13 +118,24 @@ watch(isDialogActive, async (newValue, oldValue) => {
     <BaseDialogCard>
       <BaseDialogTitle> Upload Avatar </BaseDialogTitle>
       <BaseDialogBody>
-        <div class="mb-4">
-          <input type="file" @change="onFileChange" accept="image/*" />
-        </div>
-
-        <div v-if="imageUrl" class="relative">
+        <div v-if="imageUrl" class="relative overflow-hidden rounded-lg">
           <img ref="image" :src="imageUrl" alt="To be cropped" class="w-full" />
         </div>
+        <label
+          v-else
+          for="file-input"
+          class="border-2 border-dashed rounded-md flex inset-0 items-center justify-center gap-2 text-gray-400 cursor-pointer h-[200px] hover:text-gray-500 hover:border-gray-400 hover:bg-gray-50"
+        >
+          <v-icon>mdi-tray-arrow-up</v-icon>
+          <div>Choose File</div>
+          <input
+            id="file-input"
+            type="file"
+            @change="onFileChange"
+            accept="image/*"
+            class="hidden"
+          />
+        </label>
       </BaseDialogBody>
 
       <BaseDialogActions>
