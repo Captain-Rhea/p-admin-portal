@@ -27,9 +27,9 @@ const thaiPhoneFormat = (phone: string) => {
           <div class="relative w-fit mx-auto cursor-default">
             <v-avatar size="200" color="primary">
               <v-img
-                v-if="myprofileStore.user_info.avatar_id"
-                :src="myprofileStore.user_info.avatar_base_url || ''"
-                :lazy-src="myprofileStore.user_info.avatar_lazy_url || ''"
+                v-if="myprofileStore.user_info.avatar_base_url"
+                :src="myprofileStore.user_info.avatar_base_url"
+                :lazy-src="myprofileStore.user_info.avatar_lazy_url"
               />
               <div
                 v-else

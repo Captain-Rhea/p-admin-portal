@@ -11,7 +11,7 @@ const dialogsSignOut = ref(false);
         <div v-bind="props">
           <v-avatar color="primary" class="cursor-pointer">
             <v-img
-              v-if="myprofileStore.user_info.avatar_id"
+              v-if="myprofileStore.user_info.avatar_base_url"
               :src="myprofileStore.user_info.avatar_base_url"
               :lazy-src="myprofileStore.user_info.avatar_lazy_url"
             />
