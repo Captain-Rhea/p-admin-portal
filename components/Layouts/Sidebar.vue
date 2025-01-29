@@ -2,10 +2,21 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAppStore } from '~/stores/appStore';
+import { useWindowSize } from '@vueuse/core';
 
 const appStore = useAppStore();
 
 const sidebarMiniMode = computed(() => appStore.sidebarMiniMode);
+const sidebarDrawer = computed(() => appStore.drawer);
+const { width, height } = useWindowSize();
+
+watch(width, (newVal, oldVal) => {
+  if (newVal >= 1024) {
+    appStore.disableSidebarDrawer();
+  } else {
+    appStore.disableSidebarMiniMode();
+  }
+});
 
 const menuList = [
   {
@@ -135,8 +146,8 @@ const handleMiniLeave = () => {
 
 <template>
   <div
-    :class="sidebarWidth"
-    class="transition-all duration-300 px-4 z-30 flex flex-col cursor-default relative overflow-hidden"
+    :class="[sidebarWidth, sidebarDrawer ? 'left-0' : '']"
+    class="transition-all duration-300 px-4 z-30 flex flex-col cursor-default absolute bg-slate-900 top-0 h-full left-[-100%] lg:relative lg:left-0 overflow-hidden"
     @mouseover="handleMiniOver"
     @mouseleave="handleMiniLeave"
   >
@@ -249,6 +260,11 @@ const handleMiniLeave = () => {
       Powered By RHEA SOLUTION
     </div>
   </div>
+  <div
+    v-if="sidebarDrawer"
+    class="fixed bg-slate-900/30 z-10 left-0 top-0 w-full h-screen"
+    @click="appStore.toggleSidebarDrawer()"
+  />
 </template>
 
 <style scoped>

@@ -34,15 +34,20 @@ const getMyProfile = async () => {
 
 <template>
   <div class="w-full border-b flex items-center justify-between h-[60px] px-4">
-    <v-btn
-      size="small"
-      variant="text"
-      icon
+    <div
+      class="p-2 hover:bg-gray-100 rounded-full cursor-pointer hidden lg:block"
       @click="appStore.toggleSidebarMiniMode()"
     >
       <v-icon v-if="appStore.sidebarMiniMode">mdi-menu-close</v-icon>
       <v-icon v-else>mdi-menu-open</v-icon>
-    </v-btn>
+    </div>
+
+    <div
+      class="p-2 hover:bg-gray-100 rounded-full cursor-pointer lg:hidden"
+      @click="appStore.toggleSidebarDrawer()"
+    >
+      <v-icon>mdi-menu</v-icon>
+    </div>
 
     <div class="flex items-center gap-4">
       <BaseFullScreenAction />
