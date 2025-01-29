@@ -165,10 +165,10 @@ const onSearchInput = async () => {
             v-if="showDeletedMember"
             class="text-blue-500 group-hover:text-blue-600"
           >
-            mdi-checkbox-marked-outline
+            mdi-eye-outline
           </v-icon>
           <v-icon v-else class="text-gray-300 group-hover:text-gray-400">
-            mdi-checkbox-blank-outline
+            mdi-eye-off-outline
           </v-icon>
           <div
             :class="
@@ -177,7 +177,7 @@ const onSearchInput = async () => {
                 : 'text-blue-500 group-hover:text-blue-600'
             "
           >
-            Show Deleted Member
+            Deleted Member
           </div>
         </div>
 
