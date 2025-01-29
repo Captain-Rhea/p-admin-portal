@@ -22,7 +22,7 @@ const thaiPhoneFormat = (phone: string) => {
     </div>
 
     <div class="grid grid-cols-12 gap-4">
-      <div class="col-span-4 h-full">
+      <div class="col-span-12 lg:col-span-4 h-full">
         <div class="px-4 py-6 rounded-md bg-white border h-full">
           <div class="relative w-fit mx-auto cursor-default">
             <v-avatar size="200" color="primary">
@@ -74,7 +74,7 @@ const thaiPhoneFormat = (phone: string) => {
         </div>
       </div>
 
-      <div class="col-span-8 h-full">
+      <div class="col-span-12 lg:col-span-8 h-full">
         <div class="p-4 rounded-md border">
           <DataTableLoginTransaction />
         </div>

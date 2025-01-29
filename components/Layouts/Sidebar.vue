@@ -102,27 +102,47 @@ const isActive = (path: any, submenu: Array<any> | undefined = []) => {
   return path === '/' ? route.path === '/' : route.path.startsWith(path);
 };
 
+const sidebarWidth = ref('w-[250px]');
+const sidebarMiniHover = ref(false);
+
 watch(
   () => appStore.sidebarMiniMode,
   (newVal, oldVal) => {
     if (newVal) {
       expandedMenus.value = [];
+      sidebarWidth.value = 'w-[80px]';
+    } else {
+      sidebarWidth.value = 'w-[250px]';
     }
   }
 );
+
+const handleMiniOver = () => {
+  if (sidebarMiniMode.value) {
+    sidebarWidth.value = 'w-[250px]';
+    sidebarMiniHover.value = true;
+  }
+};
+
+const handleMiniLeave = () => {
+  if (sidebarMiniMode.value) {
+    sidebarWidth.value = 'w-[80px]';
+    sidebarMiniHover.value = false;
+    expandedMenus.value = [];
+  }
+};
 </script>
 
 <template>
   <div
-    :class="{
-      'w-[80px]': sidebarMiniMode,
-      'w-[250px]': !sidebarMiniMode,
-    }"
-    class="transition-all duration-300 px-4 flex flex-col cursor-default"
+    :class="sidebarWidth"
+    class="transition-all duration-300 px-4 z-30 flex flex-col cursor-default relative overflow-hidden"
+    @mouseover="handleMiniOver"
+    @mouseleave="handleMiniLeave"
   >
     <div :class="sidebarMiniMode ? 'py-4' : 'py-8'">
       <LogoComponentRheaSemi
-        v-if="!sidebarMiniMode"
+        v-if="!sidebarMiniMode || sidebarMiniHover"
         class="w-[180px] mx-auto"
       />
       <div v-else class="w-[48px] h-[48px]">
@@ -136,10 +156,12 @@ watch(
         <!-- Caption -->
         <div
           v-if="item.type === 'caption'"
-          :class="!sidebarMiniMode ? 'mt-4' : 'text-center mt-0'"
+          :class="
+            !sidebarMiniMode || sidebarMiniHover ? 'mt-4' : 'text-center mt-0'
+          "
           class="text-white/40 py-2 uppercase text-xs"
         >
-          {{ !sidebarMiniMode ? item.name : '------' }}
+          {{ !sidebarMiniMode || sidebarMiniHover ? item.name : '------' }}
         </div>
 
         <!-- Menu -->
@@ -147,42 +169,43 @@ watch(
           <!-- เมนูที่มี Submenu -->
           <div
             v-if="item.submenu"
-            @click="!sidebarMiniMode && toggleSubmenu(item.name)"
+            @click="
+              (!sidebarMiniMode || sidebarMiniHover) && toggleSubmenu(item.name)
+            "
             :class="{
               'text-white hover:bg-slate-800': isActive(null, item.submenu),
               'text-white/60 hover:bg-slate-800': !isActive(null, item.submenu),
               'justify-center': sidebarMiniMode,
             }"
-            class="flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded-lg cursor-pointer"
+            class="flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded cursor-pointer"
           >
-            <v-icon :class="{ hidden: sidebarMiniMode }">
+            <v-icon :class="{ hidden: sidebarMiniMode || sidebarMiniHover }">
               mdi-{{ item.icon }}
             </v-icon>
-            <div v-if="!sidebarMiniMode" class="flex-1">{{ item.name }}</div>
-            <v-icon v-if="!sidebarMiniMode">
+            <div v-if="!sidebarMiniMode || sidebarMiniHover" class="flex-1">
+              {{ item.name }}
+            </div>
+            <v-icon v-if="!sidebarMiniMode || sidebarMiniHover">
               mdi-chevron-{{ isMenuExpanded(item.name) ? 'up' : 'down' }}
             </v-icon>
           </div>
 
           <!-- เมนูที่ไม่มี Submenu -->
-          <v-tooltip v-else :text="item.name">
-            <template v-slot:activator="{ props }">
-              <NuxtLink
-                v-bind="sidebarMiniMode && props"
-                :to="item.path"
-                :class="{
-                  'bg-primary text-white hover:bg-primary': isActive(item.path),
-                  'justify-center': sidebarMiniMode,
-                }"
-                class="text-white/60 flex items-center gap-2 w-full bg-slate-800/50 p-2 rounded-lg hover:text-white/80 hover:bg-slate-800"
-              >
-                <v-icon> mdi-{{ item.icon }} </v-icon>
-                <div v-if="!sidebarMiniMode" class="capitalize">
-                  {{ item.name }}
-                </div>
-              </NuxtLink>
-            </template>
-          </v-tooltip>
+          <NuxtLink
+            v-else
+            :to="item.path"
+            :class="{
+              'bg-primary text-white hover:bg-primary': isActive(item.path),
+              'justify-center': sidebarMiniMode && !sidebarMiniHover,
+              'justify-start': sidebarMiniHover,
+            }"
+            class="text-white/60 flex items-center gap-2 w-full bg-slate-800/50 p-2 rounded hover:text-white/80 hover:bg-slate-800"
+          >
+            <v-icon> mdi-{{ item.icon }} </v-icon>
+            <div v-if="!sidebarMiniMode || sidebarMiniHover" class="capitalize">
+              {{ item.name }}
+            </div>
+          </NuxtLink>
 
           <!-- Submenu -->
           <transition name="fade-slide" mode="out-in">
@@ -219,7 +242,10 @@ watch(
     </div>
 
     <!-- Footer -->
-    <div v-if="!sidebarMiniMode" class="text-white/60 text-xs pt-8 pb-4">
+    <div
+      v-if="!sidebarMiniMode || sidebarMiniHover"
+      class="text-white/60 text-xs pt-8 pb-4"
+    >
       Powered By RHEA SOLUTION
     </div>
   </div>

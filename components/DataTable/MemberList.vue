@@ -10,7 +10,6 @@ const showDeletedMember = ref<boolean>(false);
 const headers = ref<any>([
   {
     title: 'Users',
-    align: 'start',
     sortable: false,
     key: 'user',
   },
@@ -131,7 +130,7 @@ const onSearchInput = async () => {
 </script>
 
 <template>
-  <div>
+  <div class="w-full">
     <div class="px-2">
       <h1 class="text-3xl">Members</h1>
     </div>
@@ -188,7 +187,6 @@ const onSearchInput = async () => {
       </div>
     </div>
 
-    <!-- แสดง v-data-table -->
     <v-data-table
       :headers="headers"
       :items="desserts"
