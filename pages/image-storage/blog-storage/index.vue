@@ -1,58 +1,36 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useBlogStorage } from '~/components/Api/useBlogStorage';
+import moment from 'moment';
 
 useHead({
   titleTemplate: 'Blog Storage - %s',
 });
 
-const { uploadImage } = useBlogStorage();
+const formatDate = (dateTime: string) => {
+  return moment(dateTime).format('DD-MM-YYYY');
+};
 
-const searchInput = ref('');
-const imageFile = ref<File | null>(null);
-const imagePreview = ref<string | null>(null);
+const { getImages } = useBlogStorage();
+
 const imageList = ref<any[]>([]);
-const fileInputRef = ref<HTMLInputElement | null>(null);
+const searchInput = ref('');
 
 const handleGetImageList = async () => {
   try {
-    // const response = await getImageList();
-    // imageList.value = response.data;
+    const response = await getImages('1', '10');
+    imageList.value = response.data.data;
   } catch (error) {
     console.error('Error fetching images:', error);
   }
 };
 
-const handleFileChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files[0]) {
-    imageFile.value = target.files[0];
-    imagePreview.value = URL.createObjectURL(target.files[0]);
-  }
-};
+onMounted(async () => {
+  await handleGetImageList();
+});
 
-const handleUploadImage = async () => {
-  if (!imageFile.value) {
-    console.log('No file selected');
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('file', imageFile.value);
-
-  try {
-    const response = await uploadImage(formData);
-    console.log('Upload Success:', response);
-    await handleGetImageList();
-    imageFile.value = null;
-    imagePreview.value = null;
-  } catch (error) {
-    console.log('Upload Error:', error);
-  }
-};
-
-const openFileInput = () => {
-  fileInputRef.value?.click();
+const dialogUploadImage = ref<boolean>(false);
+const handleDialogUploadImageSuccess = async (event: boolean) => {
+  if (event) await handleGetImageList();
 };
 
 const dialogDeleteImage = ref<boolean>(false);
@@ -60,9 +38,6 @@ const dialogDeleteImageActionData = ref();
 const handleDialogDeleteImageSuccess = async (event: boolean) => {
   if (event) await handleGetImageList();
 };
-
-// ดึงรายการภาพเริ่มต้น
-// handleGetImageList();
 </script>
 
 <template>
@@ -90,28 +65,12 @@ const handleDialogDeleteImageSuccess = async (event: boolean) => {
           />
         </div>
         <div>
-          <v-btn color="primary" flat @click="openFileInput">
+          <v-btn color="primary" flat @click="dialogUploadImage = true">
             <v-icon>mdi-tray-arrow-up</v-icon>
             <div class="capitalize ml-2">Upload</div>
           </v-btn>
-          <input
-            ref="fileInputRef"
-            type="file"
-            accept="image/*"
-            class="hidden"
-            @change="handleFileChange"
-          />
         </div>
       </div>
-    </div>
-
-    <div v-if="imagePreview" class="mb-4 flex items-center gap-4">
-      <img
-        :src="imagePreview"
-        alt="Preview"
-        class="w-32 h-32 rounded-md object-cover"
-      />
-      <v-btn color="success" @click="handleUploadImage">Upload Image</v-btn>
     </div>
 
     <div class="grid grid-cols-12 gap-4">
@@ -155,12 +114,18 @@ const handleDialogDeleteImageSuccess = async (event: boolean) => {
         >
           <div class="flex items-center gap-1">
             <v-icon>mdi-calendar-range</v-icon>
-            <div>{{ item.created_at }}</div>
+            <div>{{ formatDate(item.created_at) }}</div>
           </div>
-          <div>{{ (item.base_size / 1024).toFixed(2) }} KB</div>
+          <div>{{ (item.base_size / (1024 * 1024)).toFixed(2) }} MB</div>
         </div>
       </div>
     </div>
+
+    <!-- Upload Image -->
+    <DialogsBlogStorageUploadImage
+      v-model:isDialog="dialogUploadImage"
+      @onSuccess="handleDialogUploadImageSuccess"
+    />
 
     <!-- Delete Image -->
     <DialogsBlogStorageDeleteImage
