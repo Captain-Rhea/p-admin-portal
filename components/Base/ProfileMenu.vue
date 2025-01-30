@@ -64,6 +64,6 @@ const dialogsSignOut = ref(false);
       </BaseMenuCard>
     </v-menu>
 
-    <DialogsSignOut v-model:isDialog="dialogsSignOut" />
+    <DialogsToolsbarSignOut v-model:isDialog="dialogsSignOut" />
   </div>
 </template>

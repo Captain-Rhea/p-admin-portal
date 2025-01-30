@@ -136,7 +136,7 @@ const onSearchInput = async () => {
           <v-icon class="text-gray-500">mdi-refresh</v-icon>
           <div class="capitalize ml-1">refresh</div>
         </v-btn>
-        <DialogsInviteMember @onSuccess="handleOnSuccess" />
+        <DialogsMembersInviteMember @onSuccess="handleOnSuccess" />
       </div>
     </div>
 
@@ -277,13 +277,13 @@ const onSearchInput = async () => {
       :onPageChange="handlePageChange"
     />
 
-    <DialogsResendInviteMember
+    <DialogsMembersResendInviteMember
       v-model:isDialog="dialogsResendInviteMember"
       :actionData="dialogsResendInviteMemberActionData"
       @onSuccess="handleDialogsResendInviteMemberSuccess"
     />
 
-    <DialogsRejectInviteMember
+    <DialogsMembersRejectInviteMember
       v-model:isDialog="dialogsRejectInviteMember"
       :actionData="dialogsRejectInviteMemberActionData"
       @onSuccess="handleDialogsRejectInviteMemberSuccess"

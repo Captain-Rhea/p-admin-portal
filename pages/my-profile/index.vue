@@ -39,7 +39,7 @@ const thaiPhoneFormat = (phone: string) => {
                 {{ myprofileStore.user_info_translation[1]?.last_name[0] }}
               </div>
             </v-avatar>
-            <DialogsUpdateAvatar />
+            <DialogsMyProfileUpdateAvatar />
           </div>
 
           <div
@@ -69,7 +69,7 @@ const thaiPhoneFormat = (phone: string) => {
           </div>
 
           <div class="text-center mt-4">
-            <DialogsEditProfile />
+            <DialogsMyProfileEditProfile />
           </div>
         </div>
       </div>

@@ -182,7 +182,7 @@ const onSearchInput = async () => {
         </div>
 
         <div v-if="myprofileStore.isCaptain()">
-          <DialogsCreateMember @onSuccess="handleOnSuccess" />
+          <DialogsMembersCreateMember @onSuccess="handleOnSuccess" />
         </div>
       </div>
     </div>
@@ -405,48 +405,48 @@ const onSearchInput = async () => {
       :onPageChange="handlePageChange"
     />
 
-    <DialogsChangeRoleMember
+    <DialogsMembersChangeRoleMember
       v-model:isDialog="dialogsChangeRoleMember"
       :actionData="dialogsChangeRoleMemberActionData"
       @onSuccess="handleDialogsChangeRoleMemberSuccess"
     />
 
-    <DialogsResetPasswordMember
+    <DialogsMembersResetPasswordMember
       v-model:isDialog="dialogsResetPasswordMember"
       :actionData="dialogsResetPasswordActionData"
     />
 
-    <DialogsSuspendMember
+    <DialogsMembersSuspendMember
       v-model:isDialog="dialogsSuspendMember"
       :actionData="dialogsSuspendActionData"
       @onSuccess="handleDialogsSuspendMemberSuccess"
     />
 
-    <DialogsActivateMember
+    <DialogsMembersActivateMember
       v-model:isDialog="dialogsActivateMember"
       :actionData="dialogsActivateActionData"
       @onSuccess="handleDialogsActivateMemberSuccess"
     />
 
-    <DialogsDeleteMember
+    <DialogsMembersDeleteMember
       v-model:isDialog="dialogsSoftDeleteMember"
       :actionData="dialogsSoftDeleteActionData"
       @onSuccess="handleDialogsSoftDeleteMemberSuccess"
     />
 
-    <DialogsPermanentlyDeleteMember
+    <DialogsMembersPermanentlyDeleteMember
       v-model:isDialog="dialogsPermanentlyDeleteMember"
       :actionData="dialogsPermanentlyDeleteActionData"
       @onSuccess="handleDialogsPermanentlyDeleteMemberSuccess"
     />
 
-    <DialogsRestoreDeletedMember
+    <DialogsMembersRestoreDeletedMember
       v-model:isDialog="dialogsRestoreDeleteMember"
       :actionData="dialogsRestoreDeleteActionData"
       @onSuccess="handleDialogsRestoreDeleteMemberSuccess"
     />
 
-    <DialogsProfileMember
+    <DialogsMembersProfileMember
       v-model:isDialog="dialogsMemberProfile"
       :actionData="dialogsMemberProfileActionData"
     />
