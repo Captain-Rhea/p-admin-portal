@@ -262,7 +262,7 @@ const handleMiniLeave = () => {
   </div>
   <div
     v-if="sidebarDrawer"
-    class="fixed bg-slate-900/30 z-10 left-0 top-0 w-full h-screen"
+    class="fixed bg-slate-900/30 z-20 left-0 top-0 w-full h-screen"
     @click="appStore.toggleSidebarDrawer()"
   />
 </template>

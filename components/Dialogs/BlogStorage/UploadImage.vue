@@ -2,10 +2,7 @@
 import { useBlogStorage } from '~/components/Api/useBlogStorage';
 
 const props = defineProps({
-  isDialog: {
-    type: Boolean,
-    default: false,
-  },
+  isDialog: { type: Boolean, default: false },
 });
 
 const { isDialog } = toRefs(props);
@@ -15,48 +12,93 @@ const { uploadImage } = useBlogStorage();
 const isLoading = ref(false);
 const snackbar = ref({ show: false, message: '', color: 'error' });
 
-const imageFile = ref<File | null>(null);
-const imagePreview = computed(() =>
-  imageFile.value ? URL.createObjectURL(imageFile.value) : null
-);
+const imageFiles = ref<File[]>([]);
+const imagePreviews = ref<string[]>([]);
 const fileInputRef = ref<HTMLInputElement | null>(null);
+
+const MAX_IMAGES = 6;
+const MAX_WIDTH = 1920;
+const MAX_HEIGHT = 1920;
 
 const setSnackbar = (message: string, color: 'success' | 'error') => {
   snackbar.value = { show: true, message, color };
 };
 
-const handleFileChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files?.[0]) {
-    imageFile.value = target.files[0];
-  }
+const validateImageSize = (file: File): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = () => {
+      if (img.width > MAX_WIDTH || img.height > MAX_HEIGHT) {
+        setSnackbar(
+          `Image ${file.name} exceeds ${MAX_WIDTH}x${MAX_HEIGHT}px`,
+          'error'
+        );
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    };
+  });
 };
 
-const isUploadDisabled = computed(() => !imageFile.value || isLoading.value);
+const handleFileChange = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (!target.files) return;
+
+  const files = Array.from(target.files);
+  if (imageFiles.value.length + files.length > MAX_IMAGES) {
+    setSnackbar(`You can only upload up to ${MAX_IMAGES} images`, 'error');
+    return;
+  }
+
+  for (const file of files) {
+    const isValid = await validateImageSize(file);
+    if (isValid) {
+      imageFiles.value.push(file);
+      imagePreviews.value.push(URL.createObjectURL(file));
+    }
+  }
+
+  target.value = '';
+};
+
+const removeImage = (index: number) => {
+  imageFiles.value.splice(index, 1);
+  imagePreviews.value.splice(index, 1);
+};
 
 const handleUpload = async () => {
-  if (!imageFile.value) return;
+  if (!imageFiles.value.length) return;
 
   isLoading.value = true;
   try {
-    const formData = new FormData();
-    formData.append('file', imageFile.value);
+    for (const file of imageFiles.value) {
+      const formData = new FormData();
+      formData.append('file', file);
+      await uploadImage(formData);
+    }
 
-    await uploadImage(formData);
-    imageFile.value = null;
-    setSnackbar('Image uploaded successfully!', 'success');
+    imageFiles.value = [];
+    imagePreviews.value = [];
+    setSnackbar('Images uploaded successfully!', 'success');
     emit('onSuccess', true);
     emit('update:isDialog', false);
   } catch {
-    setSnackbar('Failed to upload the image. Please try again.', 'error');
+    setSnackbar('Failed to upload images. Please try again.', 'error');
   } finally {
     isLoading.value = false;
   }
 };
 
-watch(isDialog, async (newValue, oldValue) => {
-  if (newValue) {
-    imageFile.value = null;
+const isUploadDisabled = computed(
+  () => !imageFiles.value.length || isLoading.value
+);
+
+watch(isDialog, (newVal, oldVal) => {
+  if (!newVal) {
+    imageFiles.value = [];
+    imagePreviews.value = [];
   }
 });
 </script>
@@ -65,36 +107,50 @@ watch(isDialog, async (newValue, oldValue) => {
   <v-dialog
     v-model="isDialog"
     :persistent="isLoading"
-    max-width="500"
+    max-width="600"
     @click:outside="!isLoading && emit('update:isDialog', false)"
   >
     <BaseDialogCard>
       <BaseDialogTitle>Upload Images</BaseDialogTitle>
       <BaseDialogDescription>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        You can upload up to {{ MAX_IMAGES }} images. Max size:
+        {{ MAX_WIDTH }}x{{ MAX_HEIGHT }}px.
       </BaseDialogDescription>
       <BaseDialogBody>
-        <div class="grid grid-cols-12 gap-4">
-          <div v-if="imagePreview" class="col-span-4">
+        <div class="grid grid-cols-3 gap-4">
+          <div
+            v-for="(preview, index) in imagePreviews"
+            :key="index"
+            class="relative"
+          >
             <img
-              :src="imagePreview"
-              alt="Preview"
-              class="aspect-square rounded-md object-cover"
+              :src="preview"
+              class="aspect-square rounded-md object-cover w-full"
             />
+            <div class="absolute top-1 right-1" @click="removeImage(index)">
+              <v-btn icon density="compact">
+                <v-icon size="16">mdi-close</v-icon>
+              </v-btn>
+            </div>
           </div>
 
           <label
-            class="col-span-4 border-2 border-dashed rounded-md aspect-square flex inset-0 items-center justify-center gap-2 text-gray-400 cursor-pointer hover:text-gray-500 hover:border-gray-400 hover:bg-gray-50"
+            v-if="imageFiles.length < MAX_IMAGES"
+            :class="
+              imageFiles.length === 0 ? 'col-span-3 h-[178px]' : 'aspect-square'
+            "
+            class="border-2 border-dashed rounded-md flex items-center justify-center text-gray-400 cursor-pointer hover:text-gray-500 hover:border-gray-400 hover:bg-gray-50"
           >
             <div class="text-center">
               <v-icon>mdi-tray-arrow-up</v-icon>
-              <div class="text-sm">Browse Image</div>
+              <div class="text-sm">Browse</div>
             </div>
             <input
               ref="fileInputRef"
               type="file"
               accept="image/*"
               class="hidden"
+              multiple
               @change="handleFileChange"
             />
           </label>
@@ -106,7 +162,7 @@ watch(isDialog, async (newValue, oldValue) => {
           variant="tonal"
           @click="emit('update:isDialog', false)"
         >
-          <div class="capitalize">Close</div>
+          Close
         </v-btn>
         <v-btn
           :loading="isLoading"
@@ -115,7 +171,7 @@ watch(isDialog, async (newValue, oldValue) => {
           :disabled="isUploadDisabled"
           @click="handleUpload"
         >
-          <div class="capitalize">Upload</div>
+          Upload
         </v-btn>
       </BaseDialogActions>
     </BaseDialogCard>
@@ -123,6 +179,7 @@ watch(isDialog, async (newValue, oldValue) => {
 
   <v-snackbar
     v-model="snackbar.show"
+    color="white"
     location="bottom right"
     class="mb-4 mr-4"
     vertical

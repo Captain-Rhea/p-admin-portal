@@ -37,12 +37,14 @@ export const useBlogStorage = () => {
     }
   };
 
-  const deleteImage = async (imageId: number) => {
+  const deleteImage = async (storageId: number) => {
     try {
-      console.log('Test');
-
-      // const response = await $mainApi.get('/v1/roles');
-      // return response.data;
+      const response = await $mainApi.delete('/v1/storage/blog/image', {
+        params: {
+          storage_id: storageId,
+        },
+      });
+      return response.data;
     } catch (error) {
       throw error;
     }

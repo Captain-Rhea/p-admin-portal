@@ -2,7 +2,7 @@
 import { useBlogStorage } from '~/components/Api/useBlogStorage';
 
 interface PropsData {
-  imageId: number;
+  storageId: number;
 }
 
 const props = defineProps({
@@ -32,7 +32,7 @@ const handleConfirmAction = async () => {
   try {
     isLoading.value = true;
 
-    await deleteImage(props.actionData.imageId);
+    await deleteImage(props.actionData.storageId);
 
     snackbar.value = {
       show: true,
@@ -76,7 +76,7 @@ const handleConfirmAction = async () => {
         <v-btn
           :loading="isLoading"
           color="error"
-          variant="tonal"
+          flat
           @click="handleConfirmAction"
         >
           <div class="capitalize">delete</div>

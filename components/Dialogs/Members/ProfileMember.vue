@@ -77,7 +77,7 @@ watch(isDialog, async (newValue) => {
       <BaseDialogBody>
         <div class="w-full relative">
           <div
-            class="absolute right-[-8px]"
+            class="absolute right-[-8px] cursor-pointer text-gray-400 hover:text-gray-600"
             @click="emit('update:isDialog', false)"
           >
             <v-icon>mdi-close</v-icon>
@@ -90,12 +90,12 @@ watch(isDialog, async (newValue) => {
         >
           loading...
         </div>
-        <div v-else class="grid grid-cols-12">
+        <div v-else class="grid grid-cols-12 gap-4">
           <div class="col-span-4 py-4">
-            <div class="rounded-md overflow-hidden w-fit h-fit mt-2">
+            <div class="rounded-lg overflow-hidden w-fit h-fit mt-2">
               <v-avatar
                 rounded="0"
-                size="120"
+                size="140"
                 color="primary"
                 class="cursor-pointer"
               >
@@ -113,46 +113,62 @@ watch(isDialog, async (newValue) => {
               </v-avatar>
             </div>
           </div>
-          <div class="col-span-8">
-            <div class="flex mt-6">
-              <div class="min-w-[90px] font-medium">Username:</div>
-              <div class="w-full truncate">
+          <div class="col-span-8 space-y-2">
+            <div class="mt-6">
+              <h3 class="text-2xl font-medium">Member Details</h3>
+            </div>
+
+            <div class="flex">
+              <div class="min-w-[90px] font-medium py-1">Username:</div>
+              <div
+                class="w-full truncate px-2 py-1 bg-gray-50 rounded-md text-gray-600"
+              >
                 {{ memberData.email }}
               </div>
             </div>
 
             <div class="flex">
-              <div class="min-w-[90px] font-medium">Role:</div>
-              <div class="w-full truncate capitalize">
+              <div class="min-w-[90px] font-medium py-1">Role:</div>
+              <div
+                class="w-full truncate px-2 py-1 bg-gray-50 rounded-md text-gray-600"
+              >
                 {{ memberData.roles[0].name }}
               </div>
             </div>
 
-            <div class="flex mt-4">
-              <div class="min-w-[90px] font-medium">Full Name:</div>
-              <div class="w-full truncate capitalize">
+            <div class="flex">
+              <div class="min-w-[90px] font-medium py-1">Full Name:</div>
+              <div
+                class="w-full truncate px-2 py-1 bg-gray-50 rounded-md text-gray-600"
+              >
                 {{ memberData.user_info_translation[0].first_name }}
                 {{ memberData.user_info_translation[0].last_name }}
               </div>
             </div>
 
             <div class="flex">
-              <div class="min-w-[90px] font-medium">Nickname:</div>
-              <div class="w-full truncate capitalize">
+              <div class="min-w-[90px] font-medium py-1">Nickname:</div>
+              <div
+                class="w-full truncate px-2 py-1 bg-gray-50 rounded-md text-gray-600"
+              >
                 {{ memberData.user_info_translation[0].nickname }}
               </div>
             </div>
 
             <div class="flex">
-              <div class="min-w-[90px] font-medium">Mobile:</div>
-              <div class="w-full truncate capitalize">
+              <div class="min-w-[90px] font-medium py-1">Mobile:</div>
+              <div
+                class="w-full truncate px-2 py-1 bg-gray-50 rounded-md text-gray-600"
+              >
                 {{ thaiPhoneFormat(memberData.user_info.phone) }}
               </div>
             </div>
 
             <div class="flex">
-              <div class="min-w-[90px] font-medium">Register At:</div>
-              <div class="w-full truncate capitalize">
+              <div class="min-w-[90px] font-medium py-1">Register At:</div>
+              <div
+                class="w-full truncate px-2 py-1 bg-gray-50 rounded-md text-gray-600"
+              >
                 {{ formatDate(memberData.created_at) }}
               </div>
             </div>

@@ -96,27 +96,39 @@ const handleDialogDeleteImageSuccess = async (event: boolean) => {
             <div
               class="p-1 rounded bg-gray-100 text-gray-500 cursor-pointer hover:text-gray-800"
             >
+              <v-icon size="small">mdi-cloud-download-outline</v-icon>
+            </div>
+            <div
+              class="p-1 rounded bg-gray-100 text-gray-500 cursor-pointer hover:text-gray-800"
+            >
               <v-icon size="small">mdi-pencil-outline</v-icon>
             </div>
             <div
               class="p-1 rounded bg-gray-100 text-gray-500 cursor-pointer hover:text-red-500"
-              @click="dialogDeleteImage = true"
+              @click="
+                (dialogDeleteImage = true),
+                  (dialogDeleteImageActionData = {
+                    storageId: item.storage_id,
+                  })
+              "
             >
               <v-icon size="small">mdi-trash-can-outline</v-icon>
             </div>
           </div>
         </v-img>
-        <div class="mt-2 mb-1 text-lg font-medium truncate">
-          {{ item.image_name }}
-        </div>
-        <div
-          class="truncate text-sm text-gray-500 flex items-center justify-between"
-        >
-          <div class="flex items-center gap-1">
-            <v-icon>mdi-calendar-range</v-icon>
-            <div>{{ formatDate(item.created_at) }}</div>
+        <div class="p-2 space-y-2">
+          <div class="text-lg font-medium truncate">
+            {{ item.image_name }}
           </div>
-          <div>{{ (item.base_size / (1024 * 1024)).toFixed(2) }} MB</div>
+          <div
+            class="truncate text-sm text-gray-500 flex items-center justify-between"
+          >
+            <div class="flex items-center gap-1">
+              <v-icon>mdi-calendar-range</v-icon>
+              <div>{{ formatDate(item.created_at) }}</div>
+            </div>
+            <div>{{ (item.base_size / (1024 * 1024)).toFixed(2) }} MB</div>
+          </div>
         </div>
       </div>
     </div>
