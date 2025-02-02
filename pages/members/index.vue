@@ -7,7 +7,7 @@ const myprofileStore = useMyprofileStore();
 </script>
 
 <template>
-  <div class="grid grid-cols-12 space-y-6">
+  <div class="grid grid-cols-12 space-y-6 px-4">
     <div class="col-span-12">
       <DataTableMemberList />
     </div>

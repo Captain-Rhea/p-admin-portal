@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useBlogStorage } from '~/components/Api/useBlogStorage';
 import moment from 'moment';
 
@@ -6,34 +6,52 @@ useHead({
   titleTemplate: 'Blog Storage - %s',
 });
 
-const formatDate = (dateTime: string) => {
+const formatDate = (dateTime) => {
   return moment(dateTime).format('DD-MM-YYYY');
 };
 
 const { getImages, downloadImage } = useBlogStorage();
 
-const imageList = ref<any[]>([]);
-const imageListLoading = ref<boolean>(false);
+const imageList = ref([]);
+const imageListLoading = ref(false);
+const currentPage = ref(1);
+const hasMore = ref(true);
+const scrollContainer = ref(null);
+const isFetching = ref(false);
 
-const searchInput = ref<string>('');
-const enableMultipleDelete = ref<boolean>(false);
+const searchInput = ref('');
+const enableMultipleDelete = ref(false);
 
-const handleGetImageList = async () => {
+const handleGetImageList = async (isLoadMore = false) => {
+  if (isFetching.value) return;
+  isFetching.value = true;
+
   try {
     imageListLoading.value = true;
-    const response = await getImages('1', '12');
+    if (!isLoadMore) {
+      imageList.value = [];
+    }
 
-    console.log(response.data.pagination);
+    const response = await getImages(currentPage.value, '12');
 
-    const updatedData = response.data.data.map((item: any) => ({
+    const updatedData = response.data.data.map((item) => ({
       ...item,
       selected: false,
     }));
-    imageList.value = updatedData;
+
+    if (isLoadMore) {
+      imageList.value = [...imageList.value, ...updatedData];
+    } else {
+      imageList.value = updatedData;
+    }
+
+    const pagination = response.data.pagination;
+    hasMore.value = pagination.current_page < pagination.last_page;
   } catch (error) {
     console.error('Error fetching images:', error);
   } finally {
     imageListLoading.value = false;
+    isFetching.value = false;
   }
 };
 
@@ -41,7 +59,28 @@ onMounted(async () => {
   await handleGetImageList();
 });
 
-const handleDownloadImage = async (storageData: any) => {
+const debounce = (func, delay = 300) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
+};
+
+const handleScroll = debounce(() => {
+  const container = scrollContainer.value;
+  if (!container || isFetching.value) return;
+
+  const bottomReached =
+    container.scrollTop + container.clientHeight >= container.scrollHeight - 50;
+
+  if (bottomReached && hasMore.value) {
+    currentPage.value += 1;
+    handleGetImageList(true);
+  }
+}, 300);
+
+const handleDownloadImage = async (storageData) => {
   try {
     const response = await downloadImage(storageData.storage_id);
 
@@ -78,29 +117,29 @@ const handleDownloadImage = async (storageData: any) => {
   }
 };
 
-const dialogUploadImage = ref<boolean>(false);
-const handleDialogUploadImageSuccess = async (event: boolean) => {
+const dialogUploadImage = ref(false);
+const handleDialogUploadImageSuccess = async (event) => {
   if (event) await handleGetImageList();
 };
 
-const dialogDeleteImage = ref<boolean>(false);
+const dialogDeleteImage = ref(false);
 const dialogDeleteImageActionData = ref();
-const handleDialogDeleteImageSuccess = async (event: boolean) => {
+const handleDialogDeleteImageSuccess = async (event) => {
   if (event) await handleGetImageList();
 };
 
-const dialogPreviewImage = ref<boolean>(false);
+const dialogPreviewImage = ref(false);
 const dialogPreviewImageActionData = ref();
 
-const dialogEditImageName = ref<boolean>(false);
+const dialogEditImageName = ref(false);
 const dialogEditImageNameActionData = ref();
-const handleDialogEditImageNameSuccess = async (event: boolean) => {
+const handleDialogEditImageNameSuccess = async (event) => {
   if (event) await handleGetImageList();
 };
 
-const dialogMultipleDeleteImages = ref<boolean>(false);
+const dialogMultipleDeleteImages = ref(false);
 const dialogMultipleDeleteImagesActionData = ref();
-const handleDialogMultipleDeleteImagesSuccess = async (event: boolean) => {
+const handleDialogMultipleDeleteImagesSuccess = async (event) => {
   if (event) await handleGetImageList();
 };
 
@@ -115,13 +154,13 @@ watch(enableMultipleDelete, (newVal, oldVal) => {
   }
 });
 
-const multipleDeleteCount = ref<number>(0);
-const handleSelectMultipleDelete = (item: any) => {
+const multipleDeleteCount = ref(0);
+const handleSelectMultipleDelete = (item) => {
   if (enableMultipleDelete.value) {
     item.selected = !item.selected;
   }
   multipleDeleteCount.value = imageList.value.filter(
-    (img: any) => img.selected
+    (img) => img.selected
   ).length;
 };
 
@@ -140,7 +179,11 @@ const handleConfirmSelectMultipleDelete = () => {
 </script>
 
 <template>
-  <div>
+  <div
+    ref="scrollContainer"
+    class="h-full overflow-y-auto px-4"
+    @scroll="handleScroll"
+  >
     <div class="mb-4">
       <h1 class="text-2xl font-bold">Images Storage</h1>
       <p class="text-gray-600">
@@ -326,6 +369,18 @@ const handleConfirmSelectMultipleDelete = () => {
               <div>{{ formatDate(item.created_at) }}</div>
             </div>
             <div>{{ (item.base_size / (1024 * 1024)).toFixed(2) }} MB</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-span-12 h-[100px]">
+        <div
+          v-if="imageListLoading"
+          class="flex inset-0 items-center justify-center text-gray-500 h-[100px]"
+        >
+          <div class="flex items-center gap-2">
+            <v-icon class="animate-spin">mdi-gamepad-circle-down</v-icon>
+            <span>Loading...</span>
           </div>
         </div>
       </div>

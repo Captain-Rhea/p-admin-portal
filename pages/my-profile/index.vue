@@ -16,7 +16,7 @@ const thaiPhoneFormat = (phone: string) => {
 </script>
 
 <template>
-  <div>
+  <div class="px-4">
     <div class="mb-4">
       <h1 class="text-3xl">My Profile</h1>
     </div>
