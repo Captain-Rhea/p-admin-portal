@@ -13,14 +13,27 @@ const formatDate = (dateTime: string) => {
 const { getImages, downloadImage } = useBlogStorage();
 
 const imageList = ref<any[]>([]);
-const searchInput = ref('');
+const imageListLoading = ref<boolean>(false);
+
+const searchInput = ref<string>('');
+const enableMultipleDelete = ref<boolean>(false);
 
 const handleGetImageList = async () => {
   try {
-    const response = await getImages('1', '10');
-    imageList.value = response.data.data;
+    imageListLoading.value = true;
+    const response = await getImages('1', '12');
+
+    console.log(response.data.pagination);
+
+    const updatedData = response.data.data.map((item: any) => ({
+      ...item,
+      selected: false,
+    }));
+    imageList.value = updatedData;
   } catch (error) {
     console.error('Error fetching images:', error);
+  } finally {
+    imageListLoading.value = false;
   }
 };
 
@@ -84,6 +97,46 @@ const dialogEditImageNameActionData = ref();
 const handleDialogEditImageNameSuccess = async (event: boolean) => {
   if (event) await handleGetImageList();
 };
+
+const dialogMultipleDeleteImages = ref<boolean>(false);
+const dialogMultipleDeleteImagesActionData = ref();
+const handleDialogMultipleDeleteImagesSuccess = async (event: boolean) => {
+  if (event) await handleGetImageList();
+};
+
+watch(enableMultipleDelete, (newVal, oldVal) => {
+  if (!newVal) {
+    imageList.value.forEach((item) => {
+      item.selected = false;
+    });
+    multipleDeleteCount.value = 0;
+  } else {
+    searchInput.value = '';
+  }
+});
+
+const multipleDeleteCount = ref<number>(0);
+const handleSelectMultipleDelete = (item: any) => {
+  if (enableMultipleDelete.value) {
+    item.selected = !item.selected;
+  }
+  multipleDeleteCount.value = imageList.value.filter(
+    (img: any) => img.selected
+  ).length;
+};
+
+const handleConfirmSelectMultipleDelete = () => {
+  dialogMultipleDeleteImages.value = true;
+
+  const storageIds = imageList.value
+    .filter((item) => item.selected)
+    .map((item) => item.storage_id)
+    .join(',');
+
+  dialogMultipleDeleteImagesActionData.value = {
+    storageSelected: storageIds,
+  };
+};
 </script>
 
 <template>
@@ -101,6 +154,7 @@ const handleDialogEditImageNameSuccess = async (event: boolean) => {
         <div class="min-w-[400px]">
           <v-text-field
             v-model="searchInput"
+            :disabled="enableMultipleDelete || imageList.length === 0"
             append-inner-icon="mdi-magnify"
             density="compact"
             placeholder="Search by name"
@@ -110,8 +164,50 @@ const handleDialogEditImageNameSuccess = async (event: boolean) => {
             single-line
           />
         </div>
-        <div>
-          <v-btn color="primary" flat @click="dialogUploadImage = true">
+        <div class="flex items-center gap-4">
+          <div v-if="imageList.length !== 0">
+            <div
+              v-if="multipleDeleteCount === 0"
+              :class="[!enableMultipleDelete || 'bg-red-50 text-red-500']"
+              class="flex items-center gap-1 cursor-pointer px-2 py-1 text-gray-600 hover:text-red-400 hover:bg-red-50"
+              @click="enableMultipleDelete = !enableMultipleDelete"
+            >
+              <v-icon v-if="!enableMultipleDelete">
+                mdi-checkbox-blank-outline
+              </v-icon>
+              <v-icon v-else> mdi-checkbox-marked </v-icon>
+              <div class="leading-none">Multiple Delete</div>
+            </div>
+            <div
+              v-else
+              class="flex items-center gap-1 border py-1 pl-2 pr-1 rounded cursor-default text-gray-500"
+            >
+              <div class="capitalize">select</div>
+              <div class="font-medium">{{ multipleDeleteCount }}</div>
+              <div class="capitalize border-r pr-2">
+                {{ multipleDeleteCount === 1 ? 'item' : 'items' }}
+              </div>
+              <div
+                class="capitalize cursor-pointer px-2 rounded hover:text-red-500 hover:bg-red-50"
+                @click="handleConfirmSelectMultipleDelete"
+              >
+                delete
+              </div>
+              <div
+                class="capitalize cursor-pointer px-2 rounded hover:text-gray-800 hover:bg-gray-100"
+                @click="enableMultipleDelete = !enableMultipleDelete"
+              >
+                cancel
+              </div>
+            </div>
+          </div>
+
+          <v-btn
+            :disabled="enableMultipleDelete"
+            color="primary"
+            flat
+            @click="dialogUploadImage = true"
+          >
             <v-icon>mdi-tray-arrow-up</v-icon>
             <div class="capitalize ml-2">Upload</div>
           </v-btn>
@@ -119,11 +215,41 @@ const handleDialogEditImageNameSuccess = async (event: boolean) => {
       </div>
     </div>
 
-    <div class="grid grid-cols-12 gap-4">
+    <div
+      v-if="imageListLoading && imageList.length === 0"
+      class="flex inset-0 items-center justify-center h-[200px] bg-gray-50 text-gray-500 rounded-lg"
+    >
+      <div class="flex items-center gap-2">
+        <v-icon class="animate-spin">mdi-gamepad-circle-down</v-icon>
+        <span>Loading...</span>
+      </div>
+    </div>
+
+    <div
+      v-if="imageList.length === 0"
+      class="flex inset-0 items-center justify-center h-[200px] bg-gray-50 text-gray-500 rounded-lg"
+    >
+      <div class="capitalize cursor-default">
+        no data available
+        <span
+          class="capitalize ml-1 font-semibold cursor-pointer hover:text-blue-500 hover:underline"
+          @click="dialogUploadImage = true"
+        >
+          upload now!
+        </span>
+      </div>
+    </div>
+    <div v-else class="grid grid-cols-12 gap-4">
       <div
         v-for="(item, index) in imageList"
         :key="index"
-        class="col-span-3 rounded-lg overflow-hidden p-2 border group"
+        :class="[
+          item.selected ? 'bg-primary-100' : 'border',
+          !enableMultipleDelete || 'cursor-pointer hover:bg-blue-50',
+        ]"
+        class="col-span-3 rounded-lg overflow-hidden p-2 group"
+        style="border: 1px solid #007aff"
+        @click="handleSelectMultipleDelete(item)"
       >
         <v-img
           :src="item.base_url"
@@ -132,6 +258,18 @@ const handleDialogEditImageNameSuccess = async (event: boolean) => {
           cover
         >
           <div
+            v-if="enableMultipleDelete"
+            class="p-2 bg-white rounded absolute top-2 right-2"
+          >
+            <v-icon v-if="!item.selected" size="24">
+              mdi-checkbox-blank-outline
+            </v-icon>
+            <v-icon v-else size="24" class="text-primary-base">
+              mdi-checkbox-marked
+            </v-icon>
+          </div>
+          <div
+            v-else
             class="bg-white/50 m-1 p-1 rounded absolute right-2 opacity-[0%] space-y-1 transition-all duration-300 group-hover:right-0 group-hover:opacity-[100%]"
           >
             <div
@@ -217,6 +355,13 @@ const handleDialogEditImageNameSuccess = async (event: boolean) => {
       v-model:isDialog="dialogEditImageName"
       :actionData="dialogEditImageNameActionData"
       @onSuccess="handleDialogEditImageNameSuccess"
+    />
+
+    <!-- Multiple Delete Images -->
+    <DialogsBlogStorageMultipleDeleteImages
+      v-model:isDialog="dialogMultipleDeleteImages"
+      :actionData="dialogMultipleDeleteImagesActionData"
+      @onSuccess="handleDialogMultipleDeleteImagesSuccess"
     />
   </div>
 </template>

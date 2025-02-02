@@ -74,11 +74,25 @@ export const useBlogStorage = () => {
     }
   };
 
+  const multipleDeleteImages = async (storageIds: string) => {
+    try {
+      const response = await $mainApi.delete('/v1/storage/blog/images', {
+        params: {
+          storage_ids: storageIds,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     getImages,
     uploadImage,
     deleteImage,
     downloadImage,
     editImageName,
+    multipleDeleteImages,
   };
 };
