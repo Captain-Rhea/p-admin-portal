@@ -24,13 +24,29 @@ export const useBlogStorage = () => {
     }
   };
 
-  const uploadImage = async (formData: any) => {
+  const uploadImage = async (
+    formData: any,
+    onProgress?: (progress: number) => void
+  ) => {
     try {
       const response = await $mainApi.post('/v1/storage/blog/image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        onUploadProgress: (progressEvent: {
+          loaded: number;
+          total: number;
+        }) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+
+          if (onProgress) {
+            onProgress(percentCompleted);
+          }
+        },
       });
+
       return response.data;
     } catch (error) {
       throw error;

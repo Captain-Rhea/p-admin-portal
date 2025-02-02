@@ -76,7 +76,9 @@ const handleUpload = async () => {
     for (const file of imageFiles.value) {
       const formData = new FormData();
       formData.append('file', file);
-      await uploadImage(formData);
+      await uploadImage(formData, (progress) => {
+        console.log(`Upload Progress: ${progress}%`);
+      });
     }
 
     imageFiles.value = [];
@@ -117,6 +119,7 @@ watch(isDialog, (newVal, oldVal) => {
         {{ MAX_WIDTH }}x{{ MAX_HEIGHT }}px.
       </BaseDialogDescription>
       <BaseDialogBody>
+        {{ imagePreviews }}
         <div class="grid grid-cols-3 gap-4">
           <div
             v-for="(preview, index) in imagePreviews"
@@ -127,8 +130,15 @@ watch(isDialog, (newVal, oldVal) => {
               :src="preview"
               class="aspect-square rounded-md object-cover w-full"
             />
+
+            <div
+              class="absolute bg-white p-1 m-1 bottom-0 left-0 right-0 rounded-full"
+            >
+              <v-progress-linear :indeterminate="true" color="info" rounded />
+            </div>
+
             <div class="absolute top-1 right-1" @click="removeImage(index)">
-              <v-btn icon density="compact">
+              <v-btn :disabled="isLoading" icon density="compact">
                 <v-icon size="16">mdi-close</v-icon>
               </v-btn>
             </div>
