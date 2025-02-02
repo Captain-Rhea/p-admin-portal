@@ -50,9 +50,22 @@ export const useBlogStorage = () => {
     }
   };
 
+  const downloadImage = async (storageId: number) => {
+    try {
+      const response = await $mainApi.get('/v1/storage/blog/image/download', {
+        params: { storage_id: storageId },
+        responseType: 'blob',
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     getImages,
     uploadImage,
     deleteImage,
+    downloadImage,
   };
 };

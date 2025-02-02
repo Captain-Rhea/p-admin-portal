@@ -10,7 +10,7 @@ const formatDate = (dateTime: string) => {
   return moment(dateTime).format('DD-MM-YYYY');
 };
 
-const { getImages } = useBlogStorage();
+const { getImages, downloadImage } = useBlogStorage();
 
 const imageList = ref<any[]>([]);
 const searchInput = ref('');
@@ -28,6 +28,43 @@ onMounted(async () => {
   await handleGetImageList();
 });
 
+const handleDownloadImage = async (storageData: any) => {
+  try {
+    const response = await downloadImage(storageData.storage_id);
+
+    let fileName = storageData.image_name?.trim() || '';
+    if (!fileName) {
+      const now = new Date();
+      fileName = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
+        2,
+        '0'
+      )}${String(now.getDate()).padStart(2, '0')}-${String(
+        now.getHours()
+      ).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(
+        now.getSeconds()
+      ).padStart(2, '0')}`;
+    }
+
+    fileName = fileName.replace(/\s+/g, '_').replace(/[\/\\:*?"<>|]/g, '');
+
+    const blob = response.data;
+    const file = new File([blob], `${fileName}.jpg`, { type: blob.type });
+
+    const blobUrl = window.URL.createObjectURL(file);
+
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (error) {
+    console.error('Error fetching images:', error);
+  }
+};
+
 const dialogUploadImage = ref<boolean>(false);
 const handleDialogUploadImageSuccess = async (event: boolean) => {
   if (event) await handleGetImageList();
@@ -38,6 +75,9 @@ const dialogDeleteImageActionData = ref();
 const handleDialogDeleteImageSuccess = async (event: boolean) => {
   if (event) await handleGetImageList();
 };
+
+const dialogPreviewImage = ref<boolean>(false);
+const dialogPreviewImageActionData = ref();
 </script>
 
 <template>
@@ -90,14 +130,22 @@ const handleDialogDeleteImageSuccess = async (event: boolean) => {
           >
             <div
               class="p-1 rounded bg-gray-100 text-gray-500 cursor-pointer hover:text-gray-800"
+              @click="
+                (dialogPreviewImage = true),
+                  (dialogPreviewImageActionData = {
+                    storageData: item,
+                  })
+              "
             >
               <v-icon size="small">mdi-arrow-expand</v-icon>
             </div>
             <div
               class="p-1 rounded bg-gray-100 text-gray-500 cursor-pointer hover:text-gray-800"
+              @click="handleDownloadImage(item)"
             >
               <v-icon size="small">mdi-cloud-download-outline</v-icon>
             </div>
+
             <div
               class="p-1 rounded bg-gray-100 text-gray-500 cursor-pointer hover:text-gray-800"
             >
@@ -144,6 +192,12 @@ const handleDialogDeleteImageSuccess = async (event: boolean) => {
       v-model:isDialog="dialogDeleteImage"
       :actionData="dialogDeleteImageActionData"
       @onSuccess="handleDialogDeleteImageSuccess"
+    />
+
+    <!-- Preview Image -->
+    <DialogsBlogStoragePreviewImage
+      v-model:isDialog="dialogPreviewImage"
+      :actionData="dialogPreviewImageActionData"
     />
   </div>
 </template>
