@@ -78,6 +78,12 @@ const handleDialogDeleteImageSuccess = async (event: boolean) => {
 
 const dialogPreviewImage = ref<boolean>(false);
 const dialogPreviewImageActionData = ref();
+
+const dialogEditImageName = ref<boolean>(false);
+const dialogEditImageNameActionData = ref();
+const handleDialogEditImageNameSuccess = async (event: boolean) => {
+  if (event) await handleGetImageList();
+};
 </script>
 
 <template>
@@ -148,6 +154,12 @@ const dialogPreviewImageActionData = ref();
 
             <div
               class="p-1 rounded bg-gray-100 text-gray-500 cursor-pointer hover:text-gray-800"
+              @click="
+                (dialogEditImageName = true),
+                  (dialogEditImageNameActionData = {
+                    storageData: item,
+                  })
+              "
             >
               <v-icon size="small">mdi-pencil-outline</v-icon>
             </div>
@@ -198,6 +210,13 @@ const dialogPreviewImageActionData = ref();
     <DialogsBlogStoragePreviewImage
       v-model:isDialog="dialogPreviewImage"
       :actionData="dialogPreviewImageActionData"
+    />
+
+    <!-- Edit Image Name -->
+    <DialogsBlogStorageEditImageName
+      v-model:isDialog="dialogEditImageName"
+      :actionData="dialogEditImageNameActionData"
+      @onSuccess="handleDialogEditImageNameSuccess"
     />
   </div>
 </template>

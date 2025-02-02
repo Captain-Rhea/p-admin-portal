@@ -62,10 +62,23 @@ export const useBlogStorage = () => {
     }
   };
 
+  const editImageName = async (storageId: number, newImageName: string) => {
+    try {
+      const response = await $mainApi.post('/v1/storage/blog/image/name', {
+        storage_id: storageId,
+        new_image_name: newImageName,
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     getImages,
     uploadImage,
     deleteImage,
     downloadImage,
+    editImageName,
   };
 };
