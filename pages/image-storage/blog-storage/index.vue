@@ -10,6 +10,14 @@ const formatDate = (dateTime) => {
   return moment(dateTime).format('DD-MM-YYYY');
 };
 
+const formatDateTime = (dateTime) => {
+  return moment(dateTime).format('DD-MM-YYYY HH:mm:s');
+};
+
+const timeAgo = (dateTime) => {
+  return moment(dateTime).fromNow();
+};
+
 const { getImages, downloadImage } = useBlogStorage();
 
 const imageList = ref([]);
@@ -28,11 +36,16 @@ const handleGetImageList = async (isLoadMore = false) => {
 
   try {
     imageListLoading.value = true;
+
     if (!isLoadMore) {
       imageList.value = [];
     }
 
-    const response = await getImages(currentPage.value, '12');
+    const response = await getImages(
+      currentPage.value,
+      '12',
+      searchInput.value
+    );
 
     const updatedData = response.data.data.map((item) => ({
       ...item,
@@ -119,13 +132,19 @@ const handleDownloadImage = async (storageData) => {
 
 const dialogUploadImage = ref(false);
 const handleDialogUploadImageSuccess = async (event) => {
-  if (event) await handleGetImageList();
+  if (event) {
+    currentPage.value = 1;
+    await handleGetImageList();
+  }
 };
 
 const dialogDeleteImage = ref(false);
 const dialogDeleteImageActionData = ref();
 const handleDialogDeleteImageSuccess = async (event) => {
-  if (event) await handleGetImageList();
+  if (event) {
+    currentPage.value = 1;
+    await handleGetImageList();
+  }
 };
 
 const dialogPreviewImage = ref(false);
@@ -134,13 +153,21 @@ const dialogPreviewImageActionData = ref();
 const dialogEditImageName = ref(false);
 const dialogEditImageNameActionData = ref();
 const handleDialogEditImageNameSuccess = async (event) => {
-  if (event) await handleGetImageList();
+  if (event) {
+    currentPage.value = 1;
+    await handleGetImageList();
+  }
 };
 
 const dialogMultipleDeleteImages = ref(false);
 const dialogMultipleDeleteImagesActionData = ref();
 const handleDialogMultipleDeleteImagesSuccess = async (event) => {
-  if (event) await handleGetImageList();
+  if (event) {
+    multipleDeleteCount.value = 0;
+    enableMultipleDelete.value = false;
+    currentPage.value = 1;
+    await handleGetImageList();
+  }
 };
 
 watch(enableMultipleDelete, (newVal, oldVal) => {
@@ -176,6 +203,20 @@ const handleConfirmSelectMultipleDelete = () => {
     storageSelected: storageIds,
   };
 };
+
+const handleSearch = async () => {
+  if (searchInput.value !== '') {
+    currentPage.value = 1;
+    await handleGetImageList();
+  }
+};
+
+watch(searchInput, async (newVal) => {
+  if (newVal.trim() === '') {
+    currentPage.value = 1;
+    await handleGetImageList();
+  }
+});
 </script>
 
 <template>
@@ -197,7 +238,7 @@ const handleConfirmSelectMultipleDelete = () => {
         <div class="min-w-[400px]">
           <v-text-field
             v-model="searchInput"
-            :disabled="enableMultipleDelete || imageList.length === 0"
+            :disabled="enableMultipleDelete"
             append-inner-icon="mdi-magnify"
             density="compact"
             placeholder="Search by name"
@@ -205,6 +246,8 @@ const handleConfirmSelectMultipleDelete = () => {
             color="primary"
             hide-details
             single-line
+            @keyup.enter="handleSearch"
+            @click:append-inner="handleSearch"
           />
         </div>
         <div class="flex items-center gap-4">
@@ -272,15 +315,7 @@ const handleConfirmSelectMultipleDelete = () => {
       v-if="imageList.length === 0"
       class="flex inset-0 items-center justify-center h-[200px] bg-gray-50 text-gray-500 rounded-lg"
     >
-      <div class="capitalize cursor-default">
-        no data available
-        <span
-          class="capitalize ml-1 font-semibold cursor-pointer hover:text-blue-500 hover:underline"
-          @click="dialogUploadImage = true"
-        >
-          upload now!
-        </span>
-      </div>
+      <div class="capitalize cursor-default">no data available</div>
     </div>
     <div v-else class="grid grid-cols-12 gap-4">
       <div
@@ -361,14 +396,19 @@ const handleConfirmSelectMultipleDelete = () => {
           <div class="text-lg font-medium truncate">
             {{ item.image_name }}
           </div>
-          <div
-            class="truncate text-sm text-gray-500 flex items-center justify-between"
-          >
+          <div class="truncate text-sm text-gray-500">
             <div class="flex items-center gap-1">
-              <v-icon>mdi-calendar-range</v-icon>
-              <div>{{ formatDate(item.created_at) }}</div>
+              <div class="capitalize font-semibold">Uploaded :</div>
+              <div>{{ timeAgo(item.created_at) }}</div>
             </div>
-            <div>{{ (item.base_size / (1024 * 1024)).toFixed(2) }} MB</div>
+            <div class="flex items-center gap-1">
+              <div class="capitalize font-semibold">last update :</div>
+              <div>{{ timeAgo(item.updated_at) }}</div>
+            </div>
+            <div class="flex items-center gap-1">
+              <div class="capitalize font-semibold">Size :</div>
+              {{ (item.base_size / (1024 * 1024)).toFixed(2) }} MB
+            </div>
           </div>
         </div>
       </div>

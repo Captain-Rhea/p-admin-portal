@@ -100,6 +100,7 @@ watch(isDialog, async (newValue) => {
               variant="outlined"
               maxlength="250"
               required
+              @keydown.enter.prevent="handleEditImageName"
             />
           </div>
         </v-form>

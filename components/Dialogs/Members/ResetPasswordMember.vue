@@ -92,6 +92,7 @@ watch(isDialog, (newValue, oldValue) => {
             variant="outlined"
             maxlength="250"
             required
+            @keydown.enter.prevent="handleResetPassword"
             @click:append-inner="visible = !visible"
           />
         </v-form>

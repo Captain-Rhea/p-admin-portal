@@ -76,7 +76,6 @@ watch(isDialogActive, async (newValue, oldValue) => {
             color="primary"
             density="compact"
             maxlength="250"
-            clearable
           />
           <v-select
             v-model="roleId"
