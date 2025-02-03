@@ -36,7 +36,7 @@ const menuList = [
   {
     type: 'menu',
     icon: 'application-edit-outline',
-    name: 'Page Management',
+    name: 'Website',
     path: null,
     submenu: [
       {
@@ -46,6 +46,44 @@ const menuList = [
         path: '/page-management/home-page',
       },
     ],
+  },
+  {
+    type: 'menu',
+    icon: 'card-bulleted-settings-outline',
+    name: 'Base Sections',
+    path: null,
+    submenu: [
+      {
+        type: 'menu',
+        icon: 'circle-medium',
+        name: 'Page Item',
+        path: '/page-management/home-page',
+      },
+    ],
+  },
+  {
+    type: 'menu',
+    icon: 'shopping-outline',
+    name: 'Services',
+    path: '/services',
+  },
+  {
+    type: 'menu',
+    icon: 'gift-open-outline',
+    name: 'Promotions',
+    path: '/services',
+  },
+  {
+    type: 'menu',
+    icon: 'post-outline',
+    name: 'Blogs',
+    path: '/blogs',
+  },
+  {
+    type: 'menu',
+    icon: 'tag-multiple-outline',
+    name: 'Category & Tags',
+    path: '/blogs',
   },
   {
     type: 'caption',
@@ -147,11 +185,11 @@ const handleMiniLeave = () => {
 <template>
   <div
     :class="[sidebarWidth, sidebarDrawer ? 'left-0' : '']"
-    class="transition-all duration-300 px-4 z-30 flex flex-col cursor-default absolute bg-slate-900 top-0 h-full left-[-100%] lg:relative lg:left-0 overflow-hidden"
+    class="transition-all duration-300 z-30 flex flex-col cursor-default absolute bg-slate-900 top-0 h-full left-[-100%] lg:relative lg:left-0 overflow-hidden"
     @mouseover="handleMiniOver"
     @mouseleave="handleMiniLeave"
   >
-    <div :class="sidebarMiniMode ? 'py-4' : 'py-8'">
+    <div :class="sidebarMiniMode ? 'py-4' : 'py-8'" class="pr-4">
       <LogoComponentRheaSemi
         v-if="!sidebarMiniMode || sidebarMiniHover"
         class="w-[180px] mx-auto"
@@ -162,7 +200,7 @@ const handleMiniLeave = () => {
     </div>
 
     <!-- Menu List -->
-    <div class="space-y-1 flex-1">
+    <div class="space-y-1 flex-1 overflow-auto pl-1 pr-4">
       <div v-for="(item, index) in menuList" :key="index">
         <!-- Caption -->
         <div
@@ -222,7 +260,7 @@ const handleMiniLeave = () => {
           <transition name="fade-slide" mode="out-in">
             <div
               v-if="item.submenu && isMenuExpanded(item.name)"
-              class="overflow-hidden"
+              class="overflow-hidden pb-4"
             >
               <div
                 class="mt-2 space-y-1"
@@ -255,7 +293,7 @@ const handleMiniLeave = () => {
     <!-- Footer -->
     <div
       v-if="!sidebarMiniMode || sidebarMiniHover"
-      class="text-white/60 text-xs pt-8 pb-4"
+      class="text-white/60 text-xs pt-8 pb-4 pr-4 pl-1"
     >
       Powered By RHEA SOLUTION
     </div>
