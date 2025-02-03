@@ -218,10 +218,10 @@ watch(searchInput, async (newVal) => {
     @scroll="handleScroll"
   >
     <div class="mb-4">
-      <h1 class="text-2xl font-bold">Images Storage</h1>
+      <h1 class="text-2xl font-bold">Blog Image Library</h1>
       <p class="text-gray-600">
-        This page displays all images used in blog posts. You can view, search,
-        upload, and manage images related to the blog here.
+        Manage all images used in blog posts. You can view, search, upload, and
+        organize them efficiently.
       </p>
     </div>
 

@@ -60,13 +60,13 @@ const menuList = [
       {
         type: 'menu',
         icon: 'circle-medium',
-        name: 'Page Storage',
+        name: 'Page Image Library',
         path: '/image-storage/page-storage',
       },
       {
         type: 'menu',
         icon: 'circle-medium',
-        name: 'Blogs Storage',
+        name: 'Blog Image Library',
         path: '/image-storage/blog-storage',
       },
     ],
