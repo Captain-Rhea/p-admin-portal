@@ -9,10 +9,11 @@ export const useBlogStorage = () => {
     endDate?: string
   ) => {
     try {
-      const response = await $mainApi.get('/v1/storage/blog/image', {
+      const response = await $mainApi.get('/v1/storage/image-storage', {
         params: {
           page: page,
           per_page: perPage,
+          group: 'blog-storage',
           image_name: imageName || '',
           start_date: startDate || '',
           end_date: endDate || '',
@@ -29,23 +30,27 @@ export const useBlogStorage = () => {
     onProgress?: (progress: number) => void
   ) => {
     try {
-      const response = await $mainApi.post('/v1/storage/blog/image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent: {
-          loaded: number;
-          total: number;
-        }) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
+      const response = await $mainApi.post(
+        '/v1/storage/image-storage',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent: {
+            loaded: number;
+            total: number;
+          }) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
 
-          if (onProgress) {
-            onProgress(percentCompleted);
-          }
-        },
-      });
+            if (onProgress) {
+              onProgress(percentCompleted);
+            }
+          },
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -55,7 +60,7 @@ export const useBlogStorage = () => {
 
   const deleteImage = async (storageId: number) => {
     try {
-      const response = await $mainApi.delete('/v1/storage/blog/image', {
+      const response = await $mainApi.delete('/v1/storage/image-storage', {
         params: {
           storage_id: storageId,
         },
@@ -68,10 +73,13 @@ export const useBlogStorage = () => {
 
   const downloadImage = async (storageId: number) => {
     try {
-      const response = await $mainApi.get('/v1/storage/blog/image/download', {
-        params: { storage_id: storageId },
-        responseType: 'blob',
-      });
+      const response = await $mainApi.get(
+        '/v1/storage/image-storage/download',
+        {
+          params: { storage_id: storageId },
+          responseType: 'blob',
+        }
+      );
       return response;
     } catch (error) {
       throw error;
@@ -80,7 +88,7 @@ export const useBlogStorage = () => {
 
   const editImageName = async (storageId: number, newImageName: string) => {
     try {
-      const response = await $mainApi.post('/v1/storage/blog/image/name', {
+      const response = await $mainApi.post('/v1/storage/image-storage/name', {
         storage_id: storageId,
         new_image_name: newImageName,
       });
@@ -92,7 +100,7 @@ export const useBlogStorage = () => {
 
   const multipleDeleteImages = async (storageIds: string) => {
     try {
-      const response = await $mainApi.delete('/v1/storage/blog/images', {
+      const response = await $mainApi.delete('/v1/storage/images-storage', {
         params: {
           storage_ids: storageIds,
         },

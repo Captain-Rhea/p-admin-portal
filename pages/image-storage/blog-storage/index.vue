@@ -6,14 +6,6 @@ useHead({
   titleTemplate: 'Blog Storage - %s',
 });
 
-const formatDate = (dateTime) => {
-  return moment(dateTime).format('DD-MM-YYYY');
-};
-
-const formatDateTime = (dateTime) => {
-  return moment(dateTime).format('DD-MM-YYYY HH:mm:s');
-};
-
 const timeAgo = (dateTime) => {
   return moment(dateTime).fromNow();
 };

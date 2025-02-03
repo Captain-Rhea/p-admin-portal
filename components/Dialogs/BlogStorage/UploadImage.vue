@@ -79,6 +79,7 @@ const handleUpload = async () => {
     for (const [index, file] of imageFiles.value.entries()) {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('group', 'blog-storage');
 
       await uploadImage(formData, (progress) => {
         imagePreviews.value[index].uploading = progress;
