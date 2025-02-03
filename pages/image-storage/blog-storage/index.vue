@@ -312,7 +312,7 @@ watch(searchInput, async (newVal) => {
     </div>
 
     <div
-      v-if="imageList.length === 0"
+      v-if="!imageListLoading && imageList.length === 0"
       class="flex inset-0 items-center justify-center h-[200px] bg-gray-50 text-gray-500 rounded-lg"
     >
       <div class="capitalize cursor-default">no data available</div>
@@ -415,7 +415,7 @@ watch(searchInput, async (newVal) => {
 
       <div class="col-span-12 h-[100px]">
         <div
-          v-if="imageListLoading"
+          v-if="imageListLoading && imageList.length > 0"
           class="flex inset-0 items-center justify-center text-gray-500 h-[100px]"
         >
           <div class="flex items-center gap-2">

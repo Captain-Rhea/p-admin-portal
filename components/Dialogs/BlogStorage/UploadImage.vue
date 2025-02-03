@@ -13,7 +13,7 @@ const isLoading = ref(false);
 const snackbar = ref({ show: false, message: '', color: 'error' });
 
 const imageFiles = ref<File[]>([]);
-const imagePreviews = ref<string[]>([]);
+const imagePreviews = ref<any[]>([]);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const MAX_IMAGES = 6;
@@ -56,7 +56,10 @@ const handleFileChange = async (event: Event) => {
     const isValid = await validateImageSize(file);
     if (isValid) {
       imageFiles.value.push(file);
-      imagePreviews.value.push(URL.createObjectURL(file));
+      imagePreviews.value.push({
+        image: URL.createObjectURL(file),
+        uploading: 0,
+      });
     }
   }
 
@@ -73,11 +76,12 @@ const handleUpload = async () => {
 
   isLoading.value = true;
   try {
-    for (const file of imageFiles.value) {
+    for (const [index, file] of imageFiles.value.entries()) {
       const formData = new FormData();
       formData.append('file', file);
+
       await uploadImage(formData, (progress) => {
-        console.log(`Upload Progress: ${progress}%`);
+        imagePreviews.value[index].uploading = progress;
       });
     }
 
@@ -119,7 +123,6 @@ watch(isDialog, (newVal, oldVal) => {
         {{ MAX_WIDTH }}x{{ MAX_HEIGHT }}px.
       </BaseDialogDescription>
       <BaseDialogBody>
-        {{ imagePreviews }}
         <div class="grid grid-cols-3 gap-4">
           <div
             v-for="(preview, index) in imagePreviews"
@@ -127,25 +130,43 @@ watch(isDialog, (newVal, oldVal) => {
             class="relative"
           >
             <img
-              :src="preview"
+              :src="preview.image"
               class="aspect-square rounded-md object-cover w-full"
             />
 
             <div
+              v-if="isLoading"
               class="absolute bg-white p-1 m-1 bottom-0 left-0 right-0 rounded-full"
             >
-              <v-progress-linear :indeterminate="true" color="info" rounded />
+              <v-progress-linear
+                v-model="preview.uploading"
+                :color="preview.uploading === 100 ? 'green' : 'blue'"
+                rounded
+              />
             </div>
 
-            <div class="absolute top-1 right-1" @click="removeImage(index)">
+            <div
+              v-if="!isLoading"
+              class="absolute top-1 right-1"
+              @click="removeImage(index)"
+            >
               <v-btn :disabled="isLoading" icon density="compact">
                 <v-icon size="16">mdi-close</v-icon>
               </v-btn>
             </div>
+
+            <div
+              v-if="preview.uploading === 100"
+              class="absolute bg-slate-800/60 top-0 left-0 w-full h-full flex inset-0 items-center justify-center rounded-md"
+            >
+              <v-icon size="100" class="text-green-500">
+                mdi-check-circle-outline
+              </v-icon>
+            </div>
           </div>
 
           <label
-            v-if="imageFiles.length < MAX_IMAGES"
+            v-if="imageFiles.length < MAX_IMAGES && !isLoading"
             :class="
               imageFiles.length === 0 ? 'col-span-3 h-[178px]' : 'aspect-square'
             "
