@@ -1,12 +1,12 @@
 <script setup lang="ts">
 useHead({
-  titleTemplate: 'Dashboard - %s',
+  titleTemplate: 'Blogs - %s',
 });
 </script>
 
 <template>
   <div class="px-4">
-    <h1 class="text-2xl">Dashboard</h1>
+    <h1 class="text-2xl">Blogs</h1>
     <p>
       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex voluptas
       temporibus possimus obcaecati doloribus exercitationem quis totam.

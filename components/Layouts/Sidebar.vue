@@ -45,6 +45,42 @@ const menuList = [
         name: 'Home Page',
         path: '/page-management/home-page',
       },
+      {
+        type: 'menu',
+        icon: 'circle-medium',
+        name: 'About Us Page',
+        path: '/page-management/about-us-page',
+      },
+      {
+        type: 'menu',
+        icon: 'circle-medium',
+        name: 'Services Page',
+        path: '/page-management/services-page',
+      },
+      {
+        type: 'menu',
+        icon: 'circle-medium',
+        name: 'Reviews Page',
+        path: '/page-management/reviews-page',
+      },
+      {
+        type: 'menu',
+        icon: 'circle-medium',
+        name: 'Blogs Page',
+        path: '/page-management/blogs-page',
+      },
+      {
+        type: 'menu',
+        icon: 'circle-medium',
+        name: 'Dentist Team Page',
+        path: '/page-management/dentist-team-page',
+      },
+      {
+        type: 'menu',
+        icon: 'circle-medium',
+        name: 'Contact Page',
+        path: '/page-management/contact-page',
+      },
     ],
   },
   {
@@ -57,7 +93,7 @@ const menuList = [
         type: 'menu',
         icon: 'circle-medium',
         name: 'Page Item',
-        path: '/page-management/home-page',
+        path: '/',
       },
     ],
   },
@@ -71,7 +107,7 @@ const menuList = [
     type: 'menu',
     icon: 'gift-open-outline',
     name: 'Promotions',
-    path: '/services',
+    path: '/promotions',
   },
   {
     type: 'menu',
@@ -83,7 +119,7 @@ const menuList = [
     type: 'menu',
     icon: 'tag-multiple-outline',
     name: 'Category & Tags',
-    path: '/blogs',
+    path: '/category-tags',
   },
   {
     type: 'caption',
@@ -265,7 +301,7 @@ const handleMiniLeave = () => {
               <div
                 class="mt-2 space-y-1"
                 :style="{
-                  maxHeight: isMenuExpanded(item.name) ? '200px' : '0',
+                  maxHeight: isMenuExpanded(item.name) ? '100%' : '0',
                   transition: 'max-height 0.3s ease-out',
                 }"
               >
@@ -278,9 +314,9 @@ const handleMiniLeave = () => {
                       subItem.path
                     ),
                   }"
-                  class="text-white/60 flex items-center gap-2 w-full bg-slate-800/50 p-2 rounded-lg hover:text-white/80 hover:bg-slate-800"
+                  class="text-white/60 flex items-center gap-2 w-full p-2 rounded-lg hover:text-white/80 hover:bg-slate-800/50"
                 >
-                  <v-icon>mdi-{{ subItem.icon }}</v-icon>
+                  <v-icon size="12">mdi-{{ subItem.icon }}</v-icon>
                   <div class="capitalize">{{ subItem.name }}</div>
                 </NuxtLink>
               </div>
