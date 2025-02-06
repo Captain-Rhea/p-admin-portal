@@ -118,8 +118,8 @@ const menuList = [
   {
     type: 'menu',
     icon: 'tag-multiple-outline',
-    name: 'Category & Tags',
-    path: '/category-tags',
+    name: 'Categories & Tags',
+    path: '/categories-tags',
   },
   {
     type: 'caption',
