@@ -1,9 +1,16 @@
 services:
   nuxt-static:
-    image: nginx:stable-alpine
-    container_name: nuxt-static-site
+    image: nginx:alpine
+    container_name: admin-portal-rhea
+    restart: always
     ports:
-      - '3010:80'
+      - '4000:80'
     volumes:
       - ./dist:/usr/share/nginx/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - nuxt-network
+
+networks:
+  nuxt-network:
+    driver: bridge

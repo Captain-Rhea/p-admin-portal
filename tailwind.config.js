@@ -58,6 +58,10 @@ module.exports = {
           950: '#020617',
         },
       },
+      container: {
+        center: true,
+        padding: '1rem',
+      },
     },
   },
   plugins: [],

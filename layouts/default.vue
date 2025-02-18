@@ -23,7 +23,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="fixed w-full h-screen bg-slate-900 flex py-2 pr-2 pl-2 lg:pl-0">
+  <div
+    class="fixed w-full h-screen bg-slate-900 flex py-2 pr-2 pl-2 lg:pl-0 cursor-default"
+  >
     <LayoutsSidebar />
     <div class="w-full flex flex-col gap-4 flex-1 rounded-lg pb-4 bg-white">
       <LayoutsToolsbar />

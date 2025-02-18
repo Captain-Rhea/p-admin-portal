@@ -1,7 +1,7 @@
 import type { NuxtPage } from 'nuxt/schema';
 
 export default defineNuxtConfig({
-  ssr: true,
+  ssr: false,
   app: {
     head: {
       charset: 'utf-8',

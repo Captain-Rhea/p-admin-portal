@@ -25,7 +25,7 @@ const tabList = ref([
 
     <div class="grid grid-cols-12 gap-4 h-full">
       <div class="col-span-8 h-full space-y-4">
-        <div class="flex gap-2 p-2 bg-gray-50 rounded-md">
+        <div class="flex gap-2 py-2 border-y">
           <div
             v-for="(item, index) in tabList"
             :key="index"

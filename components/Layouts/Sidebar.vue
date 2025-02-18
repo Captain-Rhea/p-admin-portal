@@ -258,11 +258,11 @@ const handleMiniLeave = () => {
               (!sidebarMiniMode || sidebarMiniHover) && toggleSubmenu(item.name)
             "
             :class="{
-              'text-white hover:bg-slate-800': isActive(null, item.submenu),
+              ' text-white hover:bg-slate-800': isActive(null, item.submenu),
               'text-white/60 hover:bg-slate-800': !isActive(null, item.submenu),
               'justify-center': sidebarMiniMode,
             }"
-            class="flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded cursor-pointer"
+            class="flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded cursor-pointer hover:text-white/80"
           >
             <v-icon :class="{ hidden: sidebarMiniMode || sidebarMiniHover }">
               mdi-{{ item.icon }}
@@ -284,7 +284,7 @@ const handleMiniLeave = () => {
               'justify-center': sidebarMiniMode && !sidebarMiniHover,
               'justify-start': sidebarMiniHover,
             }"
-            class="text-white/60 flex items-center gap-2 w-full bg-slate-800/50 p-2 rounded hover:text-white/80 hover:bg-slate-800"
+            class="text-white/60 flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded hover:text-white/80 hover:bg-slate-800"
           >
             <v-icon> mdi-{{ item.icon }} </v-icon>
             <div v-if="!sidebarMiniMode || sidebarMiniHover" class="capitalize">
