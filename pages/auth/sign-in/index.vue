@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useAuth } from '~/components/Api/useAuth';
 
 useHead({
@@ -16,20 +16,19 @@ onMounted(async () => {
   try {
     await isLogin();
     return navigateTo('/');
-  } catch (error: any) {
+  } catch (error) {
     appStore.enableApp();
   }
 });
 
 const loginForm = ref();
-const email = ref<string>('');
-const password = ref<string>('');
-const visible = ref<boolean>(false);
-const isLoading = ref<boolean>(false);
-const snackbar = ref<boolean>(false);
-const snackbarMessage = ref<string>(
-  'Invalid username or password. Please try again.'
-);
+const email = ref('');
+const password = ref('');
+const visible = ref(false);
+const isLoading = ref(false);
+const snackbar = ref(false);
+const snackbarMessage =
+  ref < string > 'Invalid username or password. Please try again.';
 
 const handleLogin = async () => {
   const isValid = await loginForm.value.validate();
@@ -40,7 +39,7 @@ const handleLogin = async () => {
       await login(email.value, password.value);
       appStore.enableApp();
       navigateTo('/');
-    } catch (error: any) {
+    } catch (error) {
       snackbarMessage.value = error.response.data.message;
       isLoading.value = false;
       snackbar.value = true;
@@ -64,7 +63,7 @@ const handleLogin = async () => {
         class="absolute top-0 z-30 w-full h-full bg-slate-900/80 flex inset-0 items-center justify-center p-4"
       >
         <div class="max-w-[400px]">
-          <LogoComponentRheaWhite class="mx-auto" />
+          <LogoRheaWhite class="mx-auto" />
           <h2 class="text-white text-3xl mt-6 text-center">
             Admin Portal System Management
           </h2>

@@ -13,7 +13,7 @@ onMounted(async () => {
 
 watch(
   () => appStore.isLogin,
-  async (newValue, oldValue) => {
+  async (newValue) => {
     if (newValue) {
       if (!myprofileStore.email) {
         await getMyProfile();
@@ -35,23 +35,26 @@ const getMyProfile = async () => {
 <template>
   <div class="w-full border-b flex items-center justify-between h-[60px] px-4">
     <div
-      class="p-2 hover:bg-gray-100 rounded-full cursor-pointer hidden lg:block"
+      class="p-2 hover:bg-gray-100 rounded-full cursor-pointer hidden lg:block text-slate-500 hover:text-slate-800"
       @click="appStore.toggleSidebarMiniMode()"
     >
-      <v-icon v-if="appStore.sidebarMiniMode">mdi-menu-close</v-icon>
-      <v-icon v-else>mdi-menu-open</v-icon>
+      <UIAtomsIcon
+        v-if="appStore.sidebarMiniMode"
+        iconName="square-chevron-right"
+      />
+      <UIAtomsIcon v-else iconName="square-chevron-left" />
     </div>
 
     <div
       class="p-2 hover:bg-gray-100 rounded-full cursor-pointer lg:hidden"
       @click="appStore.toggleSidebarDrawer()"
     >
-      <v-icon>mdi-menu</v-icon>
+      <UIAtomsIcon iconName="menu" />
     </div>
 
     <div class="flex items-center gap-4">
       <BaseFullScreenAction />
-      <BaseProfileMenu />
+      <!-- <BaseProfileMenu /> -->
     </div>
   </div>
 </template>

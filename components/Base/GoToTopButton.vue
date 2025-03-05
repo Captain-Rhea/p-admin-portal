@@ -1,15 +1,3 @@
-<template>
-  <div>
-    <button
-      v-show="showButton"
-      @click="scrollToTop"
-      class="fixed bottom-8 right-8 z-50 py-4 px-2 bg-blue-600/50 text-white rounded-full shadow-lg hover:bg-blue-800 transition duration-300"
-    >
-      <LucideMoveUp class="w-4 h-4" />
-    </button>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 
@@ -31,6 +19,18 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
 });
 </script>
+
+<template>
+  <div>
+    <button
+      v-show="showButton"
+      @click="scrollToTop"
+      class="fixed bottom-8 right-8 z-50 py-4 px-2 bg-blue-600/50 text-white rounded-full shadow-lg hover:bg-blue-800 transition duration-300"
+    >
+      <UIAtomsIcon iconName="move-up" size="sm" />
+    </button>
+  </div>
+</template>
 
 <style scoped>
 button {

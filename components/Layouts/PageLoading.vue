@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useAppStore } from '~/stores/appStore';
-
 const appStore = useAppStore();
 </script>
 
@@ -10,7 +9,7 @@ const appStore = useAppStore();
     class="fixed z-50 w-full h-screen bg-gray-50 flex inset-0 items-center justify-center"
   >
     <div class="text-gray-500 flex items-center gap-2">
-      <v-icon class="animate-spin">mdi-gamepad-circle-down</v-icon>
+      <UIAtomsIcon iconName="component" size="sm" class="animate-spin" />
       <span>Loading...</span>
     </div>
   </div>

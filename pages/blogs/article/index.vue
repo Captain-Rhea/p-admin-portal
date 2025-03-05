@@ -19,7 +19,7 @@ const descriptionContent = ref<string>('');
           class="flex items-stretch cursor-pointer text-slate-500 hover:text-slate-800"
           @click="navigateToArticlesList()"
         >
-          <LucideChevronLeft :size="18" />
+          <UIAtomsIcon iconName="chevron-left" size="sm" />
           Articles List
         </div>
       </div>
@@ -32,7 +32,7 @@ const descriptionContent = ref<string>('');
         <div
           class="rounded text-slate-500 hover:text-slate-600 hover:bg-slate-50 p-1 cursor-pointer"
         >
-          <LucideSettings2 :size="20" />
+          <UIAtomsIcon iconName="settings-2" />
         </div>
       </div>
     </div>
@@ -65,7 +65,9 @@ const descriptionContent = ref<string>('');
             class="bg-slate-100 rounded-xl aspect-video flex inset-0 items-center justify-center my-6"
           >
             <div class="text-center text-slate-500">
-              <LucideImage :size="50" class="mx-auto text-slate-300" />
+              <div class="mx-auto text-slate-300">
+                <UIAtomsIcon iconName="image" size="xl" />
+              </div>
               <div class="text-3xl">Header Image</div>
               <div>16:9</div>
 

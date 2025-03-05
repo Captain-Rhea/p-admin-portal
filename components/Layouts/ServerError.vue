@@ -10,7 +10,7 @@ const appStore = useAppStore();
     class="fixed z-50 w-full h-screen bg-slate-100 flex inset-0 items-center justify-center"
   >
     <div class="max-w-[500px] text-center p-6">
-      <LogoComponentCatSleep class="w-[200px] mx-auto" />
+      <LogoCatSleep class="w-[200px] mx-auto" />
       <div class="text-4xl text-slate-800 font-semibold">
         Service Unavailable
       </div>

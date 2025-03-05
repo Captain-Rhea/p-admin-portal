@@ -25,7 +25,7 @@ const menuList = [
   },
   {
     type: 'menu',
-    icon: 'view-dashboard-outline',
+    icon: 'layout-dashboard',
     name: 'Dashboard',
     path: '/',
   },
@@ -35,49 +35,49 @@ const menuList = [
   },
   {
     type: 'menu',
-    icon: 'application-edit-outline',
+    icon: 'layout-template',
     name: 'Website',
     path: null,
     submenu: [
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Home Page',
         path: '/page-management/home-page',
       },
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'About Us Page',
         path: '/page-management/about-us-page',
       },
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Services Page',
         path: '/page-management/services-page',
       },
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Reviews Page',
         path: '/page-management/reviews-page',
       },
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Blogs Page',
         path: '/page-management/blogs-page',
       },
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Dentist Team Page',
         path: '/page-management/dentist-team-page',
       },
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Contact Page',
         path: '/page-management/contact-page',
       },
@@ -85,13 +85,13 @@ const menuList = [
   },
   {
     type: 'menu',
-    icon: 'card-bulleted-settings-outline',
+    icon: 'text-select',
     name: 'Base Sections',
     path: null,
     submenu: [
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Page Item',
         path: '/',
       },
@@ -99,25 +99,25 @@ const menuList = [
   },
   {
     type: 'menu',
-    icon: 'shopping-outline',
+    icon: 'shopping-basket',
     name: 'Services',
     path: '/services',
   },
   {
     type: 'menu',
-    icon: 'gift-open-outline',
+    icon: 'gift',
     name: 'Promotions',
     path: '/promotions',
   },
   {
     type: 'menu',
-    icon: 'post-outline',
+    icon: 'square-pen',
     name: 'Blogs',
     path: '/blogs',
   },
   {
     type: 'menu',
-    icon: 'tag-multiple-outline',
+    icon: 'tags',
     name: 'Categories & Tags',
     path: '/categories-tags',
   },
@@ -127,19 +127,19 @@ const menuList = [
   },
   {
     type: 'menu',
-    icon: 'image-multiple-outline',
+    icon: 'images',
     name: 'Images Storage',
     path: null,
     submenu: [
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Page Image Library',
         path: '/image-storage/page-storage',
       },
       {
         type: 'menu',
-        icon: 'circle-medium',
+        icon: 'dot',
         name: 'Blog Image Library',
         path: '/image-storage/blog-storage',
       },
@@ -151,13 +151,13 @@ const menuList = [
   },
   {
     type: 'menu',
-    icon: 'account-multiple-outline',
+    icon: 'users',
     name: 'Members',
     path: '/members',
   },
   {
     type: 'menu',
-    icon: 'account-outline',
+    icon: 'user',
     name: 'my profile',
     path: '/my-profile',
   },
@@ -220,18 +220,18 @@ const handleMiniLeave = () => {
 
 <template>
   <div
-    :class="[sidebarWidth, sidebarDrawer ? 'left-0' : '']"
-    class="transition-all duration-300 z-30 flex flex-col cursor-default absolute bg-slate-900 top-0 h-full left-[-100%] lg:relative lg:left-0 overflow-hidden"
+    :class="[sidebarWidth, sidebarDrawer ? 'left-0' : 'left-[-100%]']"
+    class="transition-all duration-300 z-30 flex flex-col cursor-default absolute bg-slate-900 top-0 h-full lg:relative lg:left-0 overflow-hidden pl-2"
     @mouseover="handleMiniOver"
     @mouseleave="handleMiniLeave"
   >
     <div :class="sidebarMiniMode ? 'py-4' : 'py-8'" class="pr-4">
-      <LogoComponentRheaSemi
+      <LogoRheaSemi
         v-if="!sidebarMiniMode || sidebarMiniHover"
         class="w-[180px] mx-auto"
       />
       <div v-else class="w-[48px] h-[48px]">
-        <LogoComponentSymbol />
+        <LogoSymbol />
       </div>
     </div>
 
@@ -264,15 +264,20 @@ const handleMiniLeave = () => {
             }"
             class="flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded cursor-pointer hover:text-white/80"
           >
-            <v-icon :class="{ hidden: sidebarMiniMode || sidebarMiniHover }">
-              mdi-{{ item.icon }}
-            </v-icon>
+            <UIAtomsIcon :iconName="item.icon" size="sm" />
+
             <div v-if="!sidebarMiniMode || sidebarMiniHover" class="flex-1">
               {{ item.name }}
             </div>
-            <v-icon v-if="!sidebarMiniMode || sidebarMiniHover">
-              mdi-chevron-{{ isMenuExpanded(item.name) ? 'up' : 'down' }}
-            </v-icon>
+
+            <div v-if="!sidebarMiniMode || sidebarMiniHover">
+              <UIAtomsIcon
+                v-if="isMenuExpanded(item.name)"
+                iconName="chevron-up"
+                size="xs"
+              />
+              <UIAtomsIcon v-else iconName="chevron-down" size="xs" />
+            </div>
           </div>
 
           <!-- เมนูที่ไม่มี Submenu -->
@@ -280,13 +285,14 @@ const handleMiniLeave = () => {
             v-else
             :to="item.path"
             :class="{
-              'bg-primary text-white hover:bg-primary': isActive(item.path),
+              'bg-primary-800 text-red hover:bg-primary-800 hover:text-white cursor-default':
+                isActive(item.path),
               'justify-center': sidebarMiniMode && !sidebarMiniHover,
               'justify-start': sidebarMiniHover,
             }"
-            class="text-white/60 flex items-center gap-2 w-full bg-slate-800/80 p-2 rounded hover:text-white/80 hover:bg-slate-800"
+            class="text-white flex items-center gap-2 w-full bg-slate-800 p-2 rounded hover:text-white hover:bg-slate-800"
           >
-            <v-icon> mdi-{{ item.icon }} </v-icon>
+            <UIAtomsIcon :iconName="item.icon" size="sm" />
             <div v-if="!sidebarMiniMode || sidebarMiniHover" class="capitalize">
               {{ item.name }}
             </div>
@@ -310,13 +316,12 @@ const handleMiniLeave = () => {
                   :key="subIndex"
                   :to="subItem.path"
                   :class="{
-                    'bg-primary text-white hover:bg-primary': isActive(
-                      subItem.path
-                    ),
+                    'bg-primary-800 text-white/100 hover:bg-primary-800 hover:text-white/100 cursor-default':
+                      isActive(subItem.path),
                   }"
                   class="text-white/60 flex items-center gap-2 w-full p-2 rounded-lg hover:text-white/80 hover:bg-slate-800/50"
                 >
-                  <v-icon size="12">mdi-{{ subItem.icon }}</v-icon>
+                  <UIAtomsIcon :iconName="subItem.icon" size="xs" />
                   <div class="capitalize">{{ subItem.name }}</div>
                 </NuxtLink>
               </div>
